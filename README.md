@@ -1,11 +1,11 @@
-# Authenticate 🔐
+# Authenticate 
 
 Authenticate is a full-stack user authentication system built with **React**, **Express**, **Passport.js**, and **Sequelize**.  
 It provides secure session-based authentication, protected routes, and a professional user dashboard.
 
 ---
 
-## 🚀 Features
+##  Features
 
 - User Registration & Login
 - Session-based Authentication (Cookies)
@@ -18,7 +18,7 @@ It provides secure session-based authentication, protected routes, and a profess
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 ### Frontend
 - React (Vite)
@@ -32,4 +32,4 @@ It provides secure session-based authentication, protected routes, and a profess
 - Passport.js
 - express-session
 - Sequelize ORM
-- SQL Database (MySQL / PostgreSQL / SQLite)
+- SQL Database (MySQL)
