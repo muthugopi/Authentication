@@ -33,14 +33,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/api/auth', authRouter);
-
-app.get("/test-session", (req, res) => {
-  res.json({
-    isAuthenticated: req.isAuthenticated(),
-    session: req.session,
-    user: req.user || null
-  });
-});
+app.use((req, res)=>res.status(404).json({message:"Not Found", description: "The Route Is Not Found On The Server"}));
 
 
 

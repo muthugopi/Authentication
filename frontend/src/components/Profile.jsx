@@ -5,12 +5,16 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const response = await fetch("http://localhost:3000/api/auth/profile", {
           method: "GET",
           credentials: "include",
+          headers: {
+            Authorization: `Bearer ${storedToken}`
+          }
         });
 
         if (!response.ok) {
@@ -73,7 +77,7 @@ const UserDashboard = () => {
             boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
           }}>
             <h2 style={{ marginBottom: "20px", color: "#1e293b" }}>Profile Information</h2>
-            
+
             <div style={{
               display: "grid",
               gridTemplateColumns: "1fr 1fr",

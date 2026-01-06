@@ -1,6 +1,7 @@
 import passport from '../utils/passport.mjs';
 import User from '../models/user.model.mjs';
-import {hash} from '../utils/hash.mjs'
+import {hash} from '../utils/hash.mjs';
+import jwt from 'jsonwebtoken';
 
 export const register = async (req, res) => {
   try {
@@ -34,6 +35,11 @@ export const login = (req, res, next) => {
     req.logIn(user, (err) => {
       if (err) return next(err);
 
+      const token = jwt.sign(
+        {id:req.user.id},
+        process.env.SECRET,
+        {expiresIn : '1d'}
+      )
       res.json({
         message: "Login successful",
         user: {
@@ -41,16 +47,13 @@ export const login = (req, res, next) => {
           name: user.name,
           email: user.email,
         },
+        token : token,
       });
     });
   })(req, res, next);
 };
 
 export const profile = (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "Not authenticated" });
-  }
-
   res.json({
     message: "Profile fetched successfully",
     user: {

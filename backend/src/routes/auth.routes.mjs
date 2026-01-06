@@ -1,6 +1,7 @@
 import express from "express";
 import { register, login, profile } from "../controllers/auth.controller.mjs";
 import passport from "../utils/passport.mjs";
+import { authMiddleware } from "../middlewares/auth.middleware.mjs";
 
 const router = express.Router();
 
@@ -33,7 +34,7 @@ router.post("/login", (req, res, next) => {
 });
 
 
-// Protected route
-router.get("/profile", profile);
+// Protected route -> only logined user can access it !
+router.get("/profile",authMiddleware, profile);
 
 export default router;

@@ -20,7 +20,10 @@ function Login() {
 
             const data = await response.json();
 
+            
+
             if (response.ok) {
+                localStorage.setItem("token", data.token);
                 setMessageColor("text-green-500");
                 setMessage("Login successful! 🎉");
                 setEmail("");
