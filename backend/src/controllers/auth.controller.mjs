@@ -36,7 +36,7 @@ export const login = (req, res, next) => {
       if (err) return next(err);
 
       const token = jwt.sign(
-        {id:req.user.id},
+        {id:req.user.id, name:req.user.name, email:req.user.email},
         process.env.SECRET,
         {expiresIn : '1d'}
       )
@@ -53,13 +53,11 @@ export const login = (req, res, next) => {
   })(req, res, next);
 };
 
+
 export const profile = (req, res) => {
+console.log(`${req.user}`)
   res.json({
     message: "Profile fetched successfully",
-    user: {
-      id: req.user.id,
-      name: req.user.name,
-      email: req.user.email,
-    },
+    user: req.user
   });
 };

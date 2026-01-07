@@ -17,13 +17,12 @@ const UserDashboard = () => {
             Authorization: `Bearer ${storedToken}`,
           },
         });
-        console.table(response);
-        console.table(response.message);
         if (!response.ok) {
           throw new Error("You are not authenticated");
         }
 
         const data = await response.json();
+        console.table(data.user)
         setUser(data.user);
       } catch (err) {
         setError(err.message);
@@ -49,7 +48,7 @@ const UserDashboard = () => {
         fontSize: "1.5rem",
         fontWeight: "bold"
       }}>
-        Welcome, {user.name}
+        Welcome Back {user.name} !
       </header>
 
       <div style={{ display: "flex", marginTop: "20px" }}>
