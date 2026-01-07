@@ -5,14 +5,20 @@ const UserDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        const storedToken = localStorage.getItem("token");
+
         const response = await fetch("http://localhost:3000/api/auth/profile", {
           method: "GET",
-          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
         });
-
+        console.table(response);
+        console.table(response.message);
         if (!response.ok) {
           throw new Error("You are not authenticated");
         }
@@ -28,6 +34,7 @@ const UserDashboard = () => {
 
     fetchProfile();
   }, []);
+
 
   if (loading) return <p style={{ textAlign: "center", marginTop: "50px" }}>Loading...</p>;
   if (error) return <p style={{ color: "red", textAlign: "center", marginTop: "50px" }}>{error}</p>;
@@ -73,7 +80,7 @@ const UserDashboard = () => {
             boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
           }}>
             <h2 style={{ marginBottom: "20px", color: "#1e293b" }}>Profile Information</h2>
-            
+
             <div style={{
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
