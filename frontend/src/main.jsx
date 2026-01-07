@@ -7,7 +7,8 @@ import Register from './components/Register.jsx';
 import Profile from './components/Profile.jsx';
 
 
-const getToken = () => localStorage.getItem("token");
+{/*const getToken = () => localStorage.getItem("token");*/}
+
 
 const router = createBrowserRouter([
   {
@@ -16,15 +17,15 @@ const router = createBrowserRouter([
   },
   {
     path: '/login',
-    element: !getToken() ? <Login /> : <Navigate to="/profile" />
+    element: <Login/>
   },
   {
     path: '/register',
-    element: !getToken() ? <Register /> : <Navigate to="/profile" />
+    element: <Register/>
   },
   {
     path: '/profile',
-    element: getToken() ? <Profile /> : <Navigate to="/login" />
+    element: <Profile/>
   }
 ]);
 

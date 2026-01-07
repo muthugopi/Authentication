@@ -9,14 +9,16 @@ const UserDashboard = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        const storedToken = localStorage.getItem("token");
+
         const response = await fetch("http://localhost:3000/api/auth/profile", {
           method: "GET",
-          credentials: "include",
           headers: {
-            Authorization: `Bearer ${storedToken}`
-          }
+            Authorization: `Bearer ${storedToken}`,
+          },
         });
-
+        console.table(response);
+        console.table(response.message);
         if (!response.ok) {
           throw new Error("You are not authenticated");
         }
@@ -32,6 +34,7 @@ const UserDashboard = () => {
 
     fetchProfile();
   }, []);
+
 
   if (loading) return <p style={{ textAlign: "center", marginTop: "50px" }}>Loading...</p>;
   if (error) return <p style={{ color: "red", textAlign: "center", marginTop: "50px" }}>{error}</p>;

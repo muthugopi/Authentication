@@ -25,9 +25,8 @@ function Login() {
             if (response.ok) {
                 localStorage.setItem("token", data.token);
                 setMessageColor("text-green-500");
-                setMessage("Login successful! 🎉");
-                setEmail("");
-                setPassword("");
+                setMessage(`Welcome Back ${data.user.name} !!`);
+                console.log(data.token)
             } else {
                 setMessageColor("text-red-500");
                 setMessage(data.error || "Login failed.");

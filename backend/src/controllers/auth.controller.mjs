@@ -40,8 +40,9 @@ export const login = (req, res, next) => {
         process.env.SECRET,
         {expiresIn : '1d'}
       )
+      console.log("TOKEN CREATED:", token);
       res.json({
-        message: "Login successful",
+        message: "Login successfully",
         user: {
           id: user.id,
           name: user.name,
