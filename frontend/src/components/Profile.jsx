@@ -86,19 +86,19 @@ const UserDashboard = () => {
               gap: "20px",
             }}>
               <div style={{ padding: "15px", background: "#f0f4f8", borderRadius: "8px" }}>
-                <h4>ID</h4>
+                <h4>ID : </h4>
                 <p>{user.id}</p>
               </div>
               <div style={{ padding: "15px", background: "#f0f4f8", borderRadius: "8px" }}>
-                <h4>Name</h4>
+                <h4>Name : </h4>
                 <p>{user.name}</p>
               </div>
               <div style={{ padding: "15px", background: "#f0f4f8", borderRadius: "8px" }}>
-                <h4>Email</h4>
+                <h4>Email : </h4>
                 <p>{user.email}</p>
               </div>
               <div style={{ padding: "15px", background: "#f0f4f8", borderRadius: "8px" }}>
-                <h4>Member Since</h4>
+                <h4>Member Since : </h4>
                 <p>{new Date().toLocaleDateString()}</p>
               </div>
             </div>
