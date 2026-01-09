@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 export const authMiddleware = (req, res, next) => {
     console.log("middleware runs !!");
     const authHeader = req.headers.authorization;
-    console.log(`authHeader : ${authHeader}`);
 
     if (!authHeader) {
         return res.status(401).json({ message: "Token missing" });

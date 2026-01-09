@@ -1,106 +1,139 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
-const UserDashboard = () => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+const Register = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
+
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/api/auth/profile", {
-          method: "GET",
-          credentials: "include",
-        });
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
-        if (!response.ok) {
-          throw new Error("You are not authenticated");
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/auth/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData)
         }
+      );
 
-        const data = await response.json();
-        setUser(data.user);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Registration failed");
       }
-    };
 
-    fetchProfile();
-  }, []);
-
-  if (loading) return <p style={{ textAlign: "center", marginTop: "50px" }}>Loading...</p>;
-  if (error) return <p style={{ color: "red", textAlign: "center", marginTop: "50px" }}>{error}</p>;
+      setSuccess(data.message || "Registered successfully!");
+      setFormData({ name: "", email: "", password: "" });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div style={{ fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", minHeight: "100vh", background: "#f4f6f8" }}>
-      {/* Header */}
-      <header style={{
-        background: "#4f46e5",
-        color: "#fff",
-        padding: "20px 40px",
-        fontSize: "1.5rem",
-        fontWeight: "bold"
-      }}>
-        Welcome, {user.name}
-      </header>
-
-      <div style={{ display: "flex", marginTop: "20px" }}>
-        {/* Sidebar */}
-        <aside style={{
-          width: "250px",
+    <div style={{
+      minHeight: "100vh",
+      background: "#f4f6f8",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+    }}>
+      <form
+        onSubmit={handleRegister}
+        style={{
           background: "#fff",
-          margin: "0 20px",
-          padding: "20px",
+          padding: "30px",
+          width: "350px",
           borderRadius: "10px",
           boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
-        }}>
-          <h3>Navigation</h3>
-          <ul style={{ listStyle: "none", padding: 0, marginTop: "10px" }}>
-            <li style={{ margin: "10px 0", cursor: "pointer", color: "#4f46e5", fontWeight: "500" }}>Dashboard</li>
-            <li style={{ margin: "10px 0", cursor: "pointer", color: "#4f46e5", fontWeight: "500" }}>Profile</li>
-            <li style={{ margin: "10px 0", cursor: "pointer", color: "#4f46e5", fontWeight: "500" }}>Settings</li>
-            <li style={{ margin: "10px 0", cursor: "pointer", color: "#f43f5e", fontWeight: "500" }}>Logout</li>
-          </ul>
-        </aside>
+        }}
+      >
+        <h2 style={{ textAlign: "center", marginBottom: "20px", color: "#4f46e5" }}>
+          Register
+        </h2>
 
-        {/* Main Content */}
-        <main style={{ flex: 1, marginRight: "20px" }}>
-          <div style={{
-            background: "#fff",
-            padding: "30px",
-            borderRadius: "10px",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
-          }}>
-            <h2 style={{ marginBottom: "20px", color: "#1e293b" }}>Profile Information</h2>
-            
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "20px",
-            }}>
-              <div style={{ padding: "15px", background: "#f0f4f8", borderRadius: "8px" }}>
-                <h4>ID</h4>
-                <p>{user.id}</p>
-              </div>
-              <div style={{ padding: "15px", background: "#f0f4f8", borderRadius: "8px" }}>
-                <h4>Name</h4>
-                <p>{user.name}</p>
-              </div>
-              <div style={{ padding: "15px", background: "#f0f4f8", borderRadius: "8px" }}>
-                <h4>Email</h4>
-                <p>{user.email}</p>
-              </div>
-              <div style={{ padding: "15px", background: "#f0f4f8", borderRadius: "8px" }}>
-                <h4>Member Since</h4>
-                <p>{new Date().toLocaleDateString()}</p>
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+          style={inputStyle}
+        />
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+          style={inputStyle}
+        />
+
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+          style={inputStyle}
+        />
+
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            width: "100%",
+            padding: "10px",
+            background: "#4f46e5",
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontWeight: "bold"
+          }}
+        >
+          {loading ? "Registering..." : "Register"}
+        </button>
+
+        {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
+        {success && <p style={{ color: "green", marginTop: "10px" }}>{success}</p>}
+      </form>
     </div>
   );
 };
 
-export default UserDashboard;
+const inputStyle = {
+  width: "100%",
+  padding: "10px",
+  marginBottom: "15px",
+  borderRadius: "6px",
+  border: "1px solid #ccc"
+};
+
+export default Register;

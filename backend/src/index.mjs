@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import passport from './utils/passport.mjs';
 import sequelize from './config/db.mjs';
 import authRouter from './routes/auth.routes.mjs'
+import User from './models/user.model.mjs'
 
 const app = express();
 

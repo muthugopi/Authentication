@@ -17,13 +17,12 @@ const UserDashboard = () => {
             Authorization: `Bearer ${storedToken}`,
           },
         });
-        console.table(response);
-        console.table(response.message);
         if (!response.ok) {
           throw new Error("You are not authenticated");
         }
 
         const data = await response.json();
+        console.table(data.user)
         setUser(data.user);
       } catch (err) {
         setError(err.message);
@@ -49,7 +48,7 @@ const UserDashboard = () => {
         fontSize: "1.5rem",
         fontWeight: "bold"
       }}>
-        Welcome, {user.name}
+        Welcome Back {user.name} !
       </header>
 
       <div style={{ display: "flex", marginTop: "20px" }}>
@@ -87,19 +86,19 @@ const UserDashboard = () => {
               gap: "20px",
             }}>
               <div style={{ padding: "15px", background: "#f0f4f8", borderRadius: "8px" }}>
-                <h4>ID</h4>
+                <h4>ID : </h4>
                 <p>{user.id}</p>
               </div>
               <div style={{ padding: "15px", background: "#f0f4f8", borderRadius: "8px" }}>
-                <h4>Name</h4>
+                <h4>Name : </h4>
                 <p>{user.name}</p>
               </div>
               <div style={{ padding: "15px", background: "#f0f4f8", borderRadius: "8px" }}>
-                <h4>Email</h4>
+                <h4>Email : </h4>
                 <p>{user.email}</p>
               </div>
               <div style={{ padding: "15px", background: "#f0f4f8", borderRadius: "8px" }}>
-                <h4>Member Since</h4>
+                <h4>Member Since : </h4>
                 <p>{new Date().toLocaleDateString()}</p>
               </div>
             </div>

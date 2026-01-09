@@ -17,7 +17,7 @@ export const register = async (req, res) => {
 
     const hashedPassword = await hash(password);
 
-    const user = await User.create({ name, email, password: hashedPassword });
+    const user = await User.create({ name, email, password: hashedPassword, role : 'user' });
     res.status(201).json({ message: "User created successfully!" });
   } catch (err) {
     console.error(`Error inside the User Controllers:\n${err}`);
@@ -29,14 +29,19 @@ export const register = async (req, res) => {
 
 export const login = (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-    if (err) return next(err);
-    if (!user) return res.status(400).json({ message: info.message });
+    if (err) {
+  return res.status(500).json({
+    success: false,
+    error: err.message
+  });
+}
 
-    req.logIn(user, (err) => {
+    if (!user) return res.status(400).json({ message: info.message });
+    req.logIn(user, (err) => { 
       if (err) return next(err);
 
       const token = jwt.sign(
-        {id:req.user.id},
+        {id:req.user.id, name:req.user.name, email:req.user.email, role:'user'},
         process.env.SECRET,
         {expiresIn : '1d'}
       )
@@ -46,6 +51,7 @@ export const login = (req, res, next) => {
           id: user.id,
           name: user.name,
           email: user.email,
+          role:user.role || 'user'
         },
         token : token,
       });
@@ -53,13 +59,17 @@ export const login = (req, res, next) => {
   })(req, res, next);
 };
 
+
 export const profile = (req, res) => {
+console.log(`${req.user}`)
   res.json({
     message: "Profile fetched successfully",
-    user: {
-      id: req.user.id,
-      name: req.user.name,
-      email: req.user.email,
-    },
+    user: req.user
   });
 };
+
+
+export const usersData = async (req, res) => {
+  const data = await User.findAll();
+  return res.status(200).json(data);
+}
