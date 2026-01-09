@@ -17,7 +17,7 @@ export const register = async (req, res) => {
 
     const hashedPassword = await hash(password);
 
-    const user = await User.create({ name, email, password: hashedPassword, role : role || 'user' });
+    const user = await User.create({ name, email, password: hashedPassword, role : 'user' });
     res.status(201).json({ message: "User created successfully!" });
   } catch (err) {
     console.error(`Error inside the User Controllers:\n${err}`);
@@ -29,13 +29,19 @@ export const register = async (req, res) => {
 
 export const login = (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
-    if (err) return next(err);
+    if (err) {
+  return res.status(500).json({
+    success: false,
+    error: err.message
+  });
+}
+
     if (!user) return res.status(400).json({ message: info.message });
     req.logIn(user, (err) => { 
       if (err) return next(err);
 
       const token = jwt.sign(
-        {id:req.user.id, name:req.user.name, email:req.user.email, role:req.user.role},
+        {id:req.user.id, name:req.user.name, email:req.user.email, role:'user'},
         process.env.SECRET,
         {expiresIn : '1d'}
       )
@@ -45,7 +51,7 @@ export const login = (req, res, next) => {
           id: user.id,
           name: user.name,
           email: user.email,
-          role:user.role
+          role:user.role || 'user'
         },
         token : token,
       });

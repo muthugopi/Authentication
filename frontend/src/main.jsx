@@ -8,7 +8,7 @@ import Register from './components/Register.jsx';
 import Profile from './components/Profile.jsx';
 
 
-const getToken = () => localStorage.getItem("tokenn");
+const getToken = () => localStorage.getItem("token");
 
 const router = createBrowserRouter([
   {
