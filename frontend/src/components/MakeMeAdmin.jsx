@@ -11,7 +11,7 @@ function MakeMeAdmin() {
         e.preventDefault();
 
         try {
-            const response = await fetch("hhttps://authentication-u5oq.onrender.com/api/auth/admin", {
+            const response = await fetch("https://authentication-u5oq.onrender.com/api/auth/admin", {
                 method: "POST",
                 credentials: "include",
                 headers: {
