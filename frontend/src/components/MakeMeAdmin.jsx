@@ -5,13 +5,12 @@ function MakeMeAdmin() {
     const [message, setMessage] = useState("");
     const [messageColor, setMessageColor] = useState("");
 
-    const storedToken = localStorage.getItem("token"); // make sure token is stored
-
+    const storedToken = localStorage.getItem("token");
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await fetch("hhttps://authentication-u5oq.onrender.com/api/auth/admin", {
+            const response = await fetch("https://authentication-u5oq.onrender.com/api/auth/admin", {
                 method: "POST",
                 credentials: "include",
                 headers: {

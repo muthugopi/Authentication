@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./components/Landing";
 import Navbar from "./components/Navbar";
-import MakeMeAdmin from "./components/makeMeAdmin";
+import MakeMeAdmin from "./components/MakeMeAdmin";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import AdminPanel from "./components/adminPanel";
