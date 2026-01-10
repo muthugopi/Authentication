@@ -1,18 +1,19 @@
 import jwt from 'jsonwebtoken';
 
-export const authorize = (...roles) => {
+export const authorize = (role) => {
     return (req, res, next) => {
         try {
-            const authHeader = re1.authHeader.authorization;
+            const authHeader = req.headers.authorization;
             if (!authHeader || !authHeader.startsWith('Bearer ')) {
+                console.log("running !")
                 return res.status(401).json({ message: "Unauthorized" })
             }
             const token = authHeader.split(' ')[1];
             const decoded = jwt.verify(token, process.env.SECRET);
 
             req.user = decoded;
-
-            if (!allowedRoles.includes(decoded.role)) {
+            console.log(req.user)
+            if (role != decoded.role) {
                 return res.status(403).json({ message: 'Forbidden: You do not have access' });
             }
 
@@ -20,7 +21,8 @@ export const authorize = (...roles) => {
 
         }
         catch (err) {
-            return res.status(401).json({message : "Invalid Token"})
+            console.log("catch runs : " + err);
+            return res.status(401).json({message : err})
         }
     }
 }

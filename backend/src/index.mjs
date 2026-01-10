@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import passport from './utils/passport.mjs';
 import sequelize from './config/db.mjs';
 import authRouter from './routes/auth.routes.mjs'
-import User from './models/user.model.mjs'
+
 
 const app = express();
 
@@ -14,7 +14,7 @@ app.use(express.json());
 //middlewares
 app.use(morgan('dev'));
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "*",
   credentials: true
 }));
 
@@ -50,6 +50,6 @@ app.use((req, res)=>res.status(404).json({message:"Not Found", description: "The
     app.listen(PORT, () => console.log(`Server Running On Port : ${PORT}`));
   }
   catch(err) {
-    console.log("Error While Connecting Database");
+    console.log("Error While Connecting Database : " + err );
   }
 })();

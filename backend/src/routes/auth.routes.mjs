@@ -2,6 +2,7 @@ import express from "express";
 import { register, login, profile, usersData } from "../controllers/auth.controller.mjs";
 import { authMiddleware } from "../middlewares/auth.middleware.mjs";
 import { authorize } from "../middlewares/authorize.middleware.mjs";
+import { makeMeAdmin } from "../controllers/makeMeAdmin.controller.mjs";
 
 const router = express.Router();
 
@@ -13,8 +14,8 @@ router.post('/login', login);
 // Protected route -> only logined user can access it !
 router.get("/profile",authMiddleware, profile);
 
-//roles 
-
+//change me before commit !!!
+router.post('/beadmin', makeMeAdmin);
 router.get('/admin',authorize('admin'),usersData);
 
 export default router;

@@ -18,6 +18,7 @@ export const register = async (req, res) => {
     const hashedPassword = await hash(password);
 
     const user = await User.create({ name, email, password: hashedPassword, role : 'user' });
+    user.save();
     res.status(201).json({ message: "User created successfully!" });
   } catch (err) {
     console.error(`Error inside the User Controllers:\n${err}`);
@@ -41,7 +42,7 @@ export const login = (req, res, next) => {
       if (err) return next(err);
 
       const token = jwt.sign(
-        {id:req.user.id, name:req.user.name, email:req.user.email, role:'user'},
+        {id:req.user.id, name:req.user.name, email:req.user.email, role:req.user.role},
         process.env.SECRET,
         {expiresIn : '1d'}
       )
@@ -55,6 +56,7 @@ export const login = (req, res, next) => {
         },
         token : token,
       });
+      //console.log(user.role)
     });
   })(req, res, next);
 };
