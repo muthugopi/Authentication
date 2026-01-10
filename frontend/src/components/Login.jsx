@@ -11,7 +11,7 @@ function Login() {
         e.preventDefault();
 
         try {
-            const response = await fetch("http://localhost:3000/api/auth/login", {
+            const response = await fetch("https://authentication-u5oq.onrender.com/api/auth/login", {
                 method: "POST",
                  credentials: "include",
                 headers: { "Content-Type": "application/json" },
@@ -19,8 +19,6 @@ function Login() {
             });
 
             const data = await response.json();
-
-            
 
             if (response.ok) {
                 localStorage.setItem("token", data.token);
@@ -31,7 +29,6 @@ function Login() {
                 setMessage(data.error || "Login failed.");
             }
         } catch (error) {
-            console.error(error);
             setMessageColor("text-red-500");
             setMessage("Server error. Please try again.");
         }

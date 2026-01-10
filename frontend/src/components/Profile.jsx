@@ -11,7 +11,7 @@ const UserDashboard = () => {
       try {
         const storedToken = localStorage.getItem("token");
 
-        const response = await fetch("http://localhost:3000/api/auth/profile", {
+        const response = await fetch("https://authentication-u5oq.onrender.com/api/auth/register", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${storedToken}`,
@@ -22,7 +22,6 @@ const UserDashboard = () => {
         }
 
         const data = await response.json();
-        console.table(data.user)
         setUser(data.user);
       } catch (err) {
         setError(err.message);

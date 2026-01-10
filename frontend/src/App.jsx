@@ -1,14 +1,24 @@
-import React from 'react'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Landing from "./components/Landing";
+import Navbar from "./components/Navbar";
+import MakeMeAdmin from "./components/makeMeAdmin";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import AdminPanel from "./components/adminPanel";
 
 function App() {
   return (
-    <>
-      <div>Hey Man Welcome To Authentication Server !!</div>
-      <a href="/register" className='text-blue-500 underline'>For Register</a><br/>
-      <a href="/login" className='text-blue-500 underline'>For Login</a><br/>
-      <span>Thanks for supporting homie, i hope i will improve the authentication and also autherization on this server !!</span>
-    </>
-  )
+    <BrowserRouter>
+    <Navbar />
+      <Routes>
+        <Route path="/" element={<Landing/>} />
+        <Route path="/admin" element={<MakeMeAdmin />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/users" element={<AdminPanel />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
