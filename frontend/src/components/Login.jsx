@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 
 function Login() {
+    const navigate = useNavigate()
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -24,6 +25,9 @@ function Login() {
                 localStorage.setItem("token", data.token);
                 setMessageColor("text-green-500");
                 setMessage(`Welcome Back ${data.user.name} !!`);
+                setTimeout(()=> {
+                    redirect('/');
+                }, 3000);
             } else {
                 setMessageColor("text-red-500");
                 setMessage(data.error || "Login failed.");

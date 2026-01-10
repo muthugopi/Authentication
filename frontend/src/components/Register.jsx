@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Register() {
   const [name, setName] = useState("");
@@ -29,6 +29,9 @@ function Register() {
         setName("");
         setEmail("");
         setPassword("");
+        setTimeout(() => {
+          redirect('/');
+        }, 3000);
       } else {
         setMessageColor("text-red-500");
         setMessage(data.error || "Registration failed");
