@@ -4,7 +4,7 @@
   "description": "creeated for authentication",
   "main": "index.mjs",
   "scripts": {
-    "test": "node index.mjs",
+    "dev": "node ./src/index.mjs",
     "start-dev": "nodemon ./src/index.mjs"
   },
   "author": "muthugopi",
