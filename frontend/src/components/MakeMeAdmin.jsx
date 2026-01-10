@@ -5,8 +5,7 @@ function MakeMeAdmin() {
     const [message, setMessage] = useState("");
     const [messageColor, setMessageColor] = useState("");
 
-    const storedToken = localStorage.getItem("token"); // make sure token is stored
-
+    const storedToken = localStorage.getItem("token");
     const handleSubmit = async (e) => {
         e.preventDefault();
 
