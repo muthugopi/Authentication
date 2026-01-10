@@ -1,139 +1,125 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-const Register = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: ""
-  });
-
+function Register() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [messageColor, setMessageColor] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleRegister = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-    setSuccess("");
+    setMessage("");
 
     try {
-      const response = await fetch(
-        "http://localhost:3000/api/auth/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(formData)
-        }
-      );
+      const response = await fetch("https://authentication-u5oq.onrender.com/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
 
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || "Registration failed");
+      if (response.ok) {
+        setMessageColor("text-green-500");
+        setMessage(data.message || "Registered successfully!");
+        setName("");
+        setEmail("");
+        setPassword("");
+      } else {
+        setMessageColor("text-red-500");
+        setMessage(data.error || "Registration failed");
       }
-
-      setSuccess(data.message || "Registered successfully!");
-      setFormData({ name: "", email: "", password: "" });
     } catch (err) {
-      setError(err.message);
+      setMessageColor("text-red-500");
+      setMessage("Server error. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#f4f6f8",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
-    }}>
-      <form
-        onSubmit={handleRegister}
-        style={{
-          background: "#fff",
-          padding: "30px",
-          width: "350px",
-          borderRadius: "10px",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
-        }}
-      >
-        <h2 style={{ textAlign: "center", marginBottom: "20px", color: "#4f46e5" }}>
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-8">
+        <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-gray-100">
           Register
-        </h2>
+        </h1>
 
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={formData.name}
-          onChange={handleChange}
-          required
-          style={inputStyle}
-        />
+        <form className="space-y-6" onSubmit={handleSubmit}>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          style={inputStyle}
-        />
+          {/* Name */}
+          <div className="relative">
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder=" "
+              required
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 peer bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+            />
+            <label className="absolute left-4 top-2 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-blue-500 peer-focus:text-sm">
+              Name
+            </label>
+          </div>
 
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-          style={inputStyle}
-        />
+          {/* Email */}
+          <div className="relative">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder=" "
+              required
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 peer bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+            />
+            <label className="absolute left-4 top-2 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-blue-500 peer-focus:text-sm">
+              Email
+            </label>
+          </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            width: "100%",
-            padding: "10px",
-            background: "#4f46e5",
-            color: "#fff",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontWeight: "bold"
-          }}
-        >
-          {loading ? "Registering..." : "Register"}
-        </button>
+          {/* Password */}
+          <div className="relative">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder=" "
+              required
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 peer bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+            />
+            <label className="absolute left-4 top-2 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-blue-500 peer-focus:text-sm">
+              Password
+            </label>
+          </div>
 
-        {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
-        {success && <p style={{ color: "green", marginTop: "10px" }}>{success}</p>}
-      </form>
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition duration-300"
+          >
+            {loading ? "Registering..." : "Register"}
+          </button>
+        </form>
+
+        <p className="text-center mt-4 text-gray-600 dark:text-gray-400">
+          Already have an account?{" "}
+          <Link to="/login" className="text-blue-500 hover:underline">
+            Login
+          </Link>
+        </p>
+
+        {message && (
+          <p className={`${messageColor} text-center mt-4 font-medium`}>
+            {message}
+          </p>
+        )}
+      </div>
     </div>
   );
-};
-
-const inputStyle = {
-  width: "100%",
-  padding: "10px",
-  marginBottom: "15px",
-  borderRadius: "6px",
-  border: "1px solid #ccc"
-};
+}
 
 export default Register;
