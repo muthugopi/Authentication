@@ -14,7 +14,7 @@ app.use(express.json());
 //middlewares
 app.use(morgan('dev'));
 app.use(cors({
-  origin: "*",
+  origin: "https://authentication-gray-five.vercel.app",
   credentials: true
 }));
 
