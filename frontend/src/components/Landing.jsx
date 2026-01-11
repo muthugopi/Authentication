@@ -26,6 +26,7 @@ const Landing = () => {
           <div className="text-xl font-extrabold tracking-tight">Authenticate</div>
           <div className="flex gap-4 items-center">
             <Link to="/login" className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:underline">Login</Link>
+            <Link to="/admin" className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:underline">Admin</Link>
             <Link to="/register" className="hidden md:inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow">Get Started</Link>
           </div>
         </nav>
