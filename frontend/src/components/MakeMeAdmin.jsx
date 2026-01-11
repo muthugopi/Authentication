@@ -8,7 +8,7 @@ function MakeMeAdmin() {
     const [message, setMessage] = useState("");
     const [messageColor, setMessageColor] = useState("");
     const [loading, setLoading] = useState(false);
-    const [redirect ,setRedirect] = useState(false);
+    const [redirect, setRedirect] = useState(false);
 
     const storedToken = localStorage.getItem("token");
     const handleSubmit = async (e) => {
@@ -27,26 +27,26 @@ function MakeMeAdmin() {
             setLoading(true);
             const data = await response.json();
 
-            if (response.ok) {
-                setMessageColor("text-green-500");
-                setMessage(data.message || "Verified successfully! You are now an admin.");
-                localStorage.setItem("token", data.token);
-                setRedirect(true);
-            } else {
-                setMessageColor("text-red-500");
-                setMessage(data.message || "Verification failed!");
-            }
+            setTimeout(() => {
+                if (response.ok) {
+                    setMessageColor("text-green-500");
+                    setMessage(data.message || "Verified successfully! You are now an admin.");
+                    localStorage.setItem("token", data.token);
+                    setRedirect(true);
+                } else {
+                    setMessageColor("text-red-500");
+                    setMessage(data.message || "Verification failed!");
+                }
+            }, 3000);
         } catch (err) {
             console.error(err);
             setMessageColor("text-red-500");
             setMessage("Server error. Please try again.");
-        } finally {
-            setLoading(false);
         }
     };
 
-    if(redirect) {
-        return <Navigate to="/users" replace/>
+    if (redirect) {
+        return <Navigate to="/users" replace />
     }
 
     return (
@@ -75,7 +75,7 @@ function MakeMeAdmin() {
                         type="submit"
                         className="w-full bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold py-3 rounded-lg shadow-md transition duration-300"
                     >
-                       {loading ? <Loading/> : "Submit"}
+                        {loading ? <Loading /> : "Submit"}
                     </button>
                 </form>
 
