@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import Loading from './Loading'
 import API from "../config/api";
 
@@ -10,6 +10,7 @@ function Register() {
   const [message, setMessage] = useState("");
   const [messageColor, setMessageColor] = useState("");
   const [loading, setLoading] = useState(false);
+  const [redirct, setRedirect] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,9 +34,7 @@ function Register() {
         setName("");
         setEmail("");
         setPassword("");
-        setTimeout(() => {
-          redirect('/');
-        }, 3000);
+        setRedirect(true);
       } else {
         setMessageColor("text-red-500");
         setMessage(data.error || "Registration failed");
@@ -47,6 +46,10 @@ function Register() {
       setLoading(false);
     }
   };
+
+  if(redirct) {
+    return <Navigate to="/" replace />
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
