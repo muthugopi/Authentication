@@ -7,7 +7,7 @@ import passport from './utils/passport.mjs';
 import sequelize from './config/db.mjs';
 import authRouter from './routes/auth.routes.mjs'
 import publicRouter from './routes/public.routes.mjs'
-
+import message from './routes/message.routes.mjs'
 
 const app = express();
 
@@ -27,8 +27,8 @@ app.use(session({
   cookie: {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
-    sameSite: "lax", 
-    secure: false 
+    sameSite: "lax",
+    secure: false
   }
 }));
 
@@ -36,23 +36,24 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/api/auth', authRouter);
-app.use('/api/count', publicRouter)
-app.use((req, res)=>res.status(404).json({message:"Not Found", description: "The Route Is Not Found On The Server"}));
-
+app.use('/api/count', publicRouter);
+app.use('/api/message', message)
+app.use((req, res) => res.status(404).json({ message: "Not Found", description: "The Route Is Not Found On The Server" }));
 
 
 (async () => {
   try {
     await sequelize.authenticate();
     console.log("Database Connected Successfully !");
-    
+
     await sequelize.sync();
-    console.log("Table Connected Successfully");
-    
+    console.log("Table Connected Successfully"); 
+
     const PORT = process.env.PORT || 3000;
+
     app.listen(PORT, () => console.log(`Server Running On Port : ${PORT}`));
   }
-  catch(err) {
-    console.log("Error While Connecting Database : " + err );
+  catch (err) {
+    console.log("Error While Connecting Database : " + err);
   }
 })();

@@ -28,6 +28,7 @@ export const makeMeAdmin = async (req, res) => {
         if (user.role === 'admin') {
             return res.status(200).json({
                 message: "You already have admin role",
+                role : 'admin',
                 token: oldToken
             });
         }

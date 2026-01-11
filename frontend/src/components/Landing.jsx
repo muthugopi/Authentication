@@ -31,15 +31,6 @@ const Landing = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-[#071026] text-gray-900 dark:text-gray-100 antialiased">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-20 space-y-16">
 
-        <nav className="flex items-center justify-between">
-          <div className="text-xl font-extrabold tracking-tight">Authenticate</div>
-          <div className="flex gap-4 items-center">
-            <Link to="/login" className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:underline">Login</Link>
-            <Link to="/admin" className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:underline">Admin</Link>
-            <Link to="/register" className="hidden md:inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white shadow">Get Started</Link>
-          </div>
-        </nav>
-
         <header className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-7 space-y-8">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight">
@@ -52,7 +43,7 @@ const Landing = () => {
             </p>
 
             <div className="flex flex-wrap gap-4 items-center">
-              <Link to="/login" className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg transform transition">
+              <Link to="/message" className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg transform transition">
                 Explore App
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" /></svg>
               </Link>

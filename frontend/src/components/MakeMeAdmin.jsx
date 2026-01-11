@@ -32,6 +32,8 @@ function MakeMeAdmin() {
                     setMessageColor("text-green-500");
                     setMessage(data.message || "Verified successfully! You are now an admin.");
                     localStorage.setItem("token", data.token);
+                    console.log(data)
+                    localStorage.setItem("role", data.role);
                     setRedirect(true);
                 } else {
                     setMessageColor("text-red-500");
