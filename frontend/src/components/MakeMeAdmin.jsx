@@ -1,16 +1,18 @@
 import React, { useState } from "react";
+import Loading from "./Loading";
 
 function MakeMeAdmin() {
     const [secret, setSecret] = useState("");
     const [message, setMessage] = useState("");
     const [messageColor, setMessageColor] = useState("");
+    const [loading, setLoading] = useState(false)
 
     const storedToken = localStorage.getItem("token");
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const response = await fetch("https://authentication-u5oq.onrender.com/api/auth/admin", {
+            const response = await fetch("https://authentication-u5oq.onrender.com/api/auth/beadmin", {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -19,7 +21,7 @@ function MakeMeAdmin() {
                 },
                 body: JSON.stringify({ secret })
             });
-
+            setLoading(true);
             const data = await response.json();
 
             if (response.ok) {
@@ -34,6 +36,8 @@ function MakeMeAdmin() {
             console.error(err);
             setMessageColor("text-red-500");
             setMessage("Server error. Please try again.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -63,7 +67,7 @@ function MakeMeAdmin() {
                         type="submit"
                         className="w-full bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white font-semibold py-3 rounded-lg shadow-md transition duration-300"
                     >
-                        Verify
+                       {loading ? <Loading/> : "Submit"}
                     </button>
                 </form>
 

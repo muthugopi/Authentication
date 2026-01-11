@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import { Link, redirect, useNavigate } from "react-router-dom";
+import Loading from "./Loading";
 
 function Login() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
     const [messageColor, setMessageColor] = useState("");
+    const [loading, setLoading] = useState(false)
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        setLoading(true);
         try {
             const response = await fetch("https://authentication-u5oq.onrender.com/api/auth/login", {
                 method: "POST",
@@ -35,6 +37,9 @@ function Login() {
         } catch (error) {
             setMessageColor("text-red-500");
             setMessage("Server error. Please try again.");
+        }
+        finally {
+            setLoading(false)
         }
     };
 
@@ -77,7 +82,7 @@ function Login() {
                         type="submit"
                         className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition duration-300"
                     >
-                        Login
+                        {loading ? <Loading/> : "Login"}
                     </button>
                 </form>
                 <p className="text-center mt-4 text-gray-600 dark:text-gray-400">

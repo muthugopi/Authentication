@@ -11,7 +11,7 @@ function AdminPanel() {
       const token = localStorage.getItem("token");
 
 
-      const response = await fetch("http://localhost:3000/api/auth/admin", {
+      const response = await fetch("https://authentication-u5oq.onrender.com/api/auth/admin", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -22,7 +22,10 @@ function AdminPanel() {
       }
 
       const data = await response.json();
-      setDatas(data);
+      const sortedData = [...data].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+      setDatas(sortedData);
     } catch (error) {
       setError(error.message);
     } finally {

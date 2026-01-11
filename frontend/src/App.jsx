@@ -4,12 +4,11 @@ import Navbar from "./components/Navbar";
 import MakeMeAdmin from "./components/MakeMeAdmin";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import AdminPanel from "./components/adminPanel";
+import AdminPanel from "./components/AdminPanel";
 
 function App() {
   return (
     <BrowserRouter>
-    <Navbar />
       <Routes>
         <Route path="/" element={<Landing/>} />
         <Route path="/admin" element={<MakeMeAdmin />} />

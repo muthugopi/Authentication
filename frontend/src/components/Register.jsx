@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Loading from './Loading'
 
 function Register() {
   const [name, setName] = useState("");
@@ -20,6 +21,8 @@ function Register() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password }),
       });
+
+      setLoading(true);
 
       const data = await response.json();
 
@@ -104,7 +107,7 @@ function Register() {
             disabled={loading}
             className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition duration-300"
           >
-            {loading ? "Registering..." : "Register"}
+            {loading ? <Loading /> : "Register"}
           </button>
         </form>
 
