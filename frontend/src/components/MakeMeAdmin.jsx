@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import Loading from "./Loading";
 import API from "../config/api";
+import { Navigate } from "react-router-dom";
 
 function MakeMeAdmin() {
     const [secret, setSecret] = useState("");
     const [message, setMessage] = useState("");
     const [messageColor, setMessageColor] = useState("");
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [redirect ,setRedirect] = useState(false);
 
     const storedToken = localStorage.getItem("token");
     const handleSubmit = async (e) => {
@@ -29,6 +31,7 @@ function MakeMeAdmin() {
                 setMessageColor("text-green-500");
                 setMessage(data.message || "Verified successfully! You are now an admin.");
                 localStorage.setItem("token", data.token);
+                setRedirect(true);
             } else {
                 setMessageColor("text-red-500");
                 setMessage(data.message || "Verification failed!");
@@ -41,6 +44,10 @@ function MakeMeAdmin() {
             setLoading(false);
         }
     };
+
+    if(redirect) {
+        return <Navigate to="/users" replace/>
+    }
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">

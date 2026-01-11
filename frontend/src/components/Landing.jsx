@@ -62,7 +62,7 @@ const Landing = () => {
               </Link>
 
               <div className="flex items-center gap-4 ml-2">
-                <Stat number={count} label="Accounts created" />
+                <Stat number={count ? count : "..."} label="Accounts created" />
                 <Stat number="98%" label="Auth coverage" />
                 <Stat number="17" label="Author" />
               </div>
