@@ -33,3 +33,4 @@ It provides secure session-based authentication, protected routes, and a profess
 - express-session
 - Sequelize ORM
 - SQL Database (MySQL)
+"# Authentication" 
