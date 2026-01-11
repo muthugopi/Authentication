@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./components/Landing";
-import MakeMeAdmin from "./components/makeMeAdmin";
+import MakeMeAdmin from "./components/MakeMeAdmin";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import AdminPanel from "./components/adminPanel";
+import AdminPanel from "./components/AdminPanel";
 import PublicMessage from "./components/PublicMessage";
 import Navbar from "./components/Navbar";
 
