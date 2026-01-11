@@ -12,7 +12,6 @@ export const authorize = (role) => {
             const decoded = jwt.verify(token, process.env.SECRET);
 
             req.user = decoded;
-            console.log(req.user)
             if (role != decoded.role) {
                 return res.status(403).json({ message: 'Forbidden: You do not have access' });
             }

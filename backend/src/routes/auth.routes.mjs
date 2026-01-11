@@ -10,7 +10,6 @@ const router = express.Router();
 router.post("/register", register);
 router.post('/login', login);
 
-
 // Protected route -> only logined user can access it !
 router.get("/profile",authMiddleware, profile);
 

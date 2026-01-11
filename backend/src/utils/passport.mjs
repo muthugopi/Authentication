@@ -23,7 +23,6 @@ passport.use(
         if (!isMatch) {
           return done(null, false, { message: "Incorrect password" });
         }
-        console.log("passport ended its running without fail !!")
         return done(null, user);
       } catch (err) {
         return done(err);

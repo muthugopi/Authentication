@@ -4,7 +4,7 @@ import User from '../models/user.model.mjs';
 export const makeMeAdmin = async (req, res) => {
     try {
         const { secret } = req.body;
-
+        console.log("make me admin is running !!");
         const authHeader = req.headers.authorization;
         if (!authHeader) {
             return res.status(401).json({ message: "Unauthorized" });
@@ -13,7 +13,6 @@ export const makeMeAdmin = async (req, res) => {
         const oldToken = authHeader.split(' ')[1];
         const decoded = jwt.verify(oldToken, process.env.SECRET);
 
-        // Validate admin secret
         if (secret !== process.env.SECRET) {
             return res.status(403).json({ message: "Forbidden !!" });
         }

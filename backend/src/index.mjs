@@ -2,9 +2,11 @@ import express from 'express';
 import session from 'express-session';
 import cors from 'cors';
 import morgan from 'morgan';
+
 import passport from './utils/passport.mjs';
 import sequelize from './config/db.mjs';
 import authRouter from './routes/auth.routes.mjs'
+import publicRouter from './routes/public.routes.mjs'
 
 
 const app = express();
@@ -19,12 +21,12 @@ app.use(cors({
 }));
 
 app.use(session({
-  secret: process.env.SECRET || "my_secret",
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    maxAge: 24 * 60 * 60 * 1000,
     sameSite: "lax", 
     secure: false 
   }
@@ -34,6 +36,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/api/auth', authRouter);
+app.use('/api/count', publicRouter)
 app.use((req, res)=>res.status(404).json({message:"Not Found", description: "The Route Is Not Found On The Server"}));
 
 
