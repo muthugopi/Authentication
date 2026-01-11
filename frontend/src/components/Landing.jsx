@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import API from "../config/api";
 
 const Landing = () => {
   const [count, setCount] = useState(0);
 
+  const isToken = localStorage.getItem("token");
+
+  if(!isToken) {
+    return <Navigate to="/login" replace />
+  }
+
   useEffect(() => {
     const fetchCount = async () => {
       try {
-        const response = await fetch(`${API}/count`,{
+        const response = await fetch(`${API}/api/count`,{
           method : "GET"
         });
         const data = await response.json();

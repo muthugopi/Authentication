@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { Link, redirect, useNavigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import API from "../config/api";
 import Loading from "./Loading";
 
 function Login() {
-    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
     const [messageColor, setMessageColor] = useState("");
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [redirct, setRedirect] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -16,7 +17,7 @@ function Login() {
         try {
             const response = await fetch(`${API}/api/auth/login`, {
                 method: "POST",
-                 credentials: "include",
+                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
             });
@@ -27,21 +28,24 @@ function Login() {
                 localStorage.setItem("token", data.token);
                 setMessageColor("text-green-500");
                 setMessage(`Welcome Back ${data.user.name} !!`);
-                setTimeout(()=> {
-                    redirect('/');
-                }, 3000);
+                setRedirect(true);
             } else {
                 setMessageColor("text-red-500");
                 setMessage(data.error || "Login failed.");
             }
         } catch (error) {
+            console.log(error)
             setMessageColor("text-red-500");
             setMessage("Server error. Please try again.");
         }
         finally {
-            setLoading(false)
+            setLoading(false);
         }
     };
+
+    if (redirct) {
+        return <Navigate to="/" replace />
+    }
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
@@ -82,7 +86,7 @@ function Login() {
                         type="submit"
                         className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition duration-300"
                     >
-                        {loading ? <Loading/> : "Login"}
+                        {loading ? <Loading /> : "Login"}
                     </button>
                 </form>
                 <p className="text-center mt-4 text-gray-600 dark:text-gray-400">
