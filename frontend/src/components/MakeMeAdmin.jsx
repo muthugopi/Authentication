@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Loading from "./Loading";
+import API from "../config/api";
 
 function MakeMeAdmin() {
     const [secret, setSecret] = useState("");
@@ -12,7 +13,7 @@ function MakeMeAdmin() {
         e.preventDefault();
 
         try {
-            const response = await fetch("https://authentication-u5oq.onrender.com/api/auth/beadmin", {
+            const response = await fetch(`${API}/api/auth/beadmin`, {
                 method: "POST",
                 credentials: "include",
                 headers: {

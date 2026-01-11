@@ -14,7 +14,7 @@ function Login() {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await fetch("https://authentication-u5oq.onrender.com/api/auth/login", {
+            const response = await fetch(`${API}/api/auth/login`, {
                 method: "POST",
                  credentials: "include",
                 headers: { "Content-Type": "application/json" },

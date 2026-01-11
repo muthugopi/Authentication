@@ -7,7 +7,9 @@ const Landing = () => {
   useEffect(() => {
     const fetchCount = async () => {
       try {
-        const response = await fetch("https://authentication-u5oq.onrender.com/api/count/");
+        const response = await fetch(`${API}/count`,{
+          method : "GET"
+        });
         const data = await response.json();
         setCount(data.totalUsers);
       } catch (error) {

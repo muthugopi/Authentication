@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Card from "./Card";
+import API from "../config/api";
 
 function AdminPanel() {
   const [datas, setDatas] = useState([]);
@@ -11,7 +12,7 @@ function AdminPanel() {
       const token = localStorage.getItem("token");
 
 
-      const response = await fetch("https://authentication-u5oq.onrender.com/api/auth/admin", {
+      const response = await fetch(`${API}/api/auth/admin`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
