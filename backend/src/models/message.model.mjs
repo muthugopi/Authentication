@@ -7,10 +7,13 @@ const Message = sequelize.define("Message", {
     allowNull : false,
     defaultValue: "Anonymous",
   },
+  title : {
+    type : DataTypes.STRING,
+    allowNull : false,
+  },
   content: {
     type: DataTypes.TEXT,
-    allowNull : false,
-    allowNull: false,
+    allowNull : false
   },
   likes: {
     type: DataTypes.INTEGER,

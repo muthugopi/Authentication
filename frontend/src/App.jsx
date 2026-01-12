@@ -6,6 +6,7 @@ import Register from "./components/Register";
 import AdminPanel from "./components/AdminPanel";
 import PublicMessage from "./components/PublicMessage";
 import Navbar from "./components/Navbar";
+import NotFound from "./components/NotFound";
 
 function App() {
   return (
@@ -18,6 +19,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/users" element={<AdminPanel />} />
         <Route path='/message' element={<PublicMessage />} />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

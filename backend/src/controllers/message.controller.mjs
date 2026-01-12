@@ -1,18 +1,25 @@
 import Message from "../models/message.model.mjs";
+import jwt from 'jsonwebtoken'
 
 export const createMessage = async (req, res) => {
   try {
-    const { username, content } = req.body;
+    const { title, content } = req.body;
+    const token = req.headers.authorization.split(" ")[1];
+    console.log(token)
+    const decoded = jwt.verify(token, process.env.SECRET);
+    req.user = decoded;
     if (!content)
       return res.status(400).json({ message: "Message required" });
 
     const msg = await Message.create({
-      username: username || "Anonymous",
+      title,
+      username: req.user.name,
       content,
     });
 
     res.json(msg);
   } catch (err) {
+    console.log(err)
     res.status(500).json({ error: err.message });
   }
 };
