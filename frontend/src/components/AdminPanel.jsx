@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Card from "./Card";
 import API from "../config/api";
+import Loading from "./Loading";
 
 function AdminPanel() {
   const [datas, setDatas] = useState([]);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
 
 
@@ -24,8 +26,8 @@ function AdminPanel() {
 
       const data = await response.json();
       const sortedData = [...data].sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
+        a.name.localeCompare(b.name)
+      );
       setDatas(sortedData);
     } catch (error) {
       setError(error.message);
@@ -38,7 +40,9 @@ function AdminPanel() {
     fetchData();
   }, []);
 
-  if (loading) return <p className="text-center mt-10 text-white">Loading...</p>;
+  if (loading) {
+    return <Loading />;
+  }
   if (error) return <div><p className="text-center mt-10 text-red-500">{error}</p></div>;
 
   return (

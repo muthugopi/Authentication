@@ -31,7 +31,7 @@ function Login() {
                 setRedirect(true);
             } else {
                 setMessageColor("text-red-500");
-                setMessage(data.error || "Login failed.");
+                setMessage(data.message || "Login failed.");
             }
         } catch (error) {
             console.log(error)

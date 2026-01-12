@@ -24,7 +24,7 @@ const Navbar = () => {
   return (
     <nav className="bg-gray-900 text-white px-6 py-4 shadow-md flex justify-between items-center relative">
       {/* Logo / Brand */}
-      <div className="text-2xl font-bold text-indigo-400">CampusApp</div>
+      <div className="text-2xl font-bold text-indigo-400">Authenticate</div>
 
       {/* Desktop Links */}
       <div className="hidden md:flex items-center gap-6">

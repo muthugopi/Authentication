@@ -46,6 +46,7 @@ export const login = (req, res, next) => {
         process.env.SECRET,
         {expiresIn : '1d'}
       )
+      console.log(`User ${user.name} has logined successfully !!`);
       res.json({
         message: "Login successfully",
         user: {

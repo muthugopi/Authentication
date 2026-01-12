@@ -38,11 +38,13 @@ function MakeMeAdmin() {
                 } else {
                     setMessageColor("text-red-500");
                     setMessage(data.message || "Verification failed!");
+                    setLoading(false)
                 }
             }, 3000);
         } catch (err) {
             console.error(err);
             setMessageColor("text-red-500");
+            setLoading(false)
             setMessage("Server error. Please try again.");
         }
     };
@@ -61,7 +63,7 @@ function MakeMeAdmin() {
                     {/* Secret Key */}
                     <div className="relative">
                         <input
-                            type="text"
+                            type="password"
                             value={secret}
                             onChange={(e) => setSecret(e.target.value)}
                             placeholder=" "

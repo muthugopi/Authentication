@@ -1,19 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import API from "../config/api";
+import Loading from "./Loading";
 
 const Landing = () => {
   const [count, setCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const isToken = localStorage.getItem("token");
 
   if(!isToken) {
-    return <Navigate to="/login" replace />
+    return <Navigate to="/register" replace />
   }
 
   useEffect(() => {
     const fetchCount = async () => {
       try {
+        setLoading(true);
         const response = await fetch(`${API}/api/count`,{
           method : "GET"
         });
@@ -21,11 +24,18 @@ const Landing = () => {
         setCount(data.totalUsers);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchCount();
   }, []);
+
+  if(loading)
+  {
+    return <Loading />
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#071026] text-gray-900 dark:text-gray-100 antialiased">
@@ -114,7 +124,7 @@ const Landing = () => {
           </div>
 
           <aside className="rounded-2xl bg-gradient-to-b from-white/60 to-white/30 dark:from-gray-800 dark:to-gray-800/60 p-8 shadow-xl border border-gray-100 dark:border-gray-700">
-            <h3 className="text-xl font-semibold mb-3">About the Author</h3>
+            <h3 className="text-xl font-semibold mb-3">About the Developer</h3>
             <p className="text-gray-700 dark:text-gray-200 mb-4">
               <strong>MUTHUGOPI J</strong> — 17 • Full-Stack Developer (MERN) • ECE at Ramco Institute of Technology.
             </p>
@@ -125,7 +135,7 @@ const Landing = () => {
             </p>
 
             <div className="flex justify-center gap-3">
-              <Link to="/login" className="px-4 py-2 my-5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">Open dashboard</Link>
+              <Link to="/admin" className="px-4 py-2 my-5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">Open dashboard</Link>
             </div>
           </aside>
         </section>
