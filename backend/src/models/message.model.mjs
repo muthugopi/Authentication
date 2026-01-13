@@ -19,6 +19,11 @@ const Message = sequelize.define("Message", {
     type: DataTypes.INTEGER,
     defaultValue: 0,
   },
+  comments: {
+  type: DataTypes.JSON,
+  defaultValue: [],
+},
+
 });
 
 export default Message;
