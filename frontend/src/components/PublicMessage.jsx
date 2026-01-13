@@ -99,36 +99,36 @@ const PublicMessage = () => {
   };
 
   const addComment = async (messageId) => {
-  if (!commentContent.trim()) return;
+    if (!commentContent.trim()) return;
 
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) return alert("You must be logged in");
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return alert("You must be logged in");
 
-    const res = await fetch(`${API}/api/message/${messageId}/comment`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ content: commentContent }),
-    });
+      const res = await fetch(`${API}/api/message/${messageId}/comment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content: commentContent }),
+      });
 
-    if (!res.ok) throw new Error("Failed to add comment");
+      if (!res.ok) throw new Error("Failed to add comment");
 
-    const updatedMessage = await res.json();
+      const updatedMessage = await res.json();
 
-    const updatedMessages = messages.map((msg) =>
-      msg.id === messageId ? updatedMessage : msg
-    );
+      const updatedMessages = messages.map((msg) =>
+        msg.id === messageId ? updatedMessage : msg
+      );
 
-    setMessages(updatedMessages);
-    setCommentContent("");
-    setActiveCommentId(null);
-  } catch (err) {
-    console.error(err);
-  }
-};
+      setMessages(updatedMessages);
+      setCommentContent("");
+      setActiveCommentId(null);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
 
   if (loading) return <Loading />;
@@ -140,79 +140,86 @@ const PublicMessage = () => {
         {/* MESSAGE FEED */}
         <div className="lg:col-span-2 space-y-6">
           {messages.map((msg) => (
-  <div key={msg.id} className="bg-white p-5 rounded-lg shadow hover:shadow-lg transition">
-    
-    {/* Header */}
-    <div className="flex justify-between items-start mb-2">
-      <div>
-        <p className="font-semibold text-indigo-600">{msg.title}</p>
-        <p className="text-sm text-gray-500">by {msg.username || "Anonymous"}</p>
-      </div>
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() => likeMessage(msg.id)}
-          className="text-indigo-600 hover:text-indigo-800 flex items-center gap-1 text-sm"
-        >
-          ❤️ {msg.likes || 0}
-        </button>
-        {role === "admin" && (
-          <button
-            onClick={() => deleteMessage(msg.id)}
-            className="text-red-500 hover:underline text-sm"
-          >
-            Delete
-          </button>
-        )}
-      </div>
-    </div>
+            <div key={msg.id} className="bg-white p-5 rounded-lg shadow hover:shadow-lg transition">
 
-    {/* Message Content */}
-    <p className="text-gray-700 mb-2">{msg.content}</p>
+              {/* Header */}
+              <div className="flex justify-between items-start mb-2">
+                <div>
+                  <p className="font-bold text-indigo-600">{msg.title}</p>
+                  <p className="text-sm text-gray-500">by {msg.username || "Anonymous"}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => likeMessage(msg.id)}
+                    className="text-indigo-600 hover:text-indigo-800 flex items-center gap-1 text-sm"
+                  >
+                    <i className="bi bi-heart-fill text-red-500"></i> {msg.likes || 0}
+                  </button>
+                  {role === "admin" && (
+                    <button
+                      onClick={() => deleteMessage(msg.id)}
+                      className="text-red-500 hover:underline text-sm"
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
+              </div>
 
-    {/* Show number of comments and toggle view */}
-    <button
-      onClick={() =>
-        setActiveCommentId(activeCommentId === msg.id ? null : msg.id)
-      }
-      className="text-sm text-indigo-600 hover:underline mb-2"
-    >
-      {msg.comments?.length ? `💬 ${msg.comments.length} Replies` : "Reply"}
-    </button>
+              {/* Message Content */}
+              <p className="text-gray-700 mb-2">{msg.content}</p>
 
-    {/* Only show comments if active */}
-    {activeCommentId === msg.id && (
-      <div className="space-y-2 mb-2">
-        {msg.comments?.map((c) => (
-          <div key={c.id} className="bg-gray-100 p-2 rounded text-sm">
-            <span className="font-semibold">{c.username}:</span> {c.content}
-          </div>
-        ))}
+              {/* Show number of comments and toggle view */}
+              <button
+                onClick={() =>
+                  setActiveCommentId(activeCommentId === msg.id ? null : msg.id)
+                }
+                className="text-sm text-indigo-600 hover:underline mb-2"
+              >
+                {msg.comments?.length ? (
+                  <>
+                    <i class="bi bi-cloud-fill"></i> {msg.comments.length} Replies
+                  </>
+                ) : (
+                  "Reply"
+                )}
 
-        {/* Add Comment */}
-        <div className="flex gap-2 mt-2">
-          <input
-            className="flex-1 p-2 border border-gray-300 rounded"
-            placeholder="Write a comment..."
-            value={commentContent}
-            onChange={(e) => setCommentContent(e.target.value)}
-          />
-          <button
-            onClick={() => addComment(msg.id)}
-            className="bg-indigo-600 text-white px-3 rounded hover:bg-indigo-700"
-          >
-            Comment
-          </button>
-          <button
-            onClick={() => { setActiveCommentId(null); setCommentContent(""); }}
-            className="text-gray-500 px-2"
-          >
-            ✖
-          </button>
-        </div>
-      </div>
-    )}
-  </div>
-))}
+              </button>
+
+              {/* Only show comments if active */}
+              {activeCommentId === msg.id && (
+                <div className="space-y-2 mb-2">
+                  {msg.comments?.map((c) => (
+                    <div key={c.id} className="bg-gray-100 p-2 rounded text-sm">
+                      <span className="font-semibold">{c.username}:</span> {c.content}
+                    </div>
+                  ))}
+
+                  {/* Add Comment */}
+                  <div className="flex gap-2 mt-2">
+                    <input
+                      className="flex-1 p-2 border border-gray-300 rounded"
+                      placeholder="Write a comment..."
+                      value={commentContent}
+                      onChange={(e) => setCommentContent(e.target.value)}
+                    />
+                    <button
+                      onClick={() => addComment(msg.id)}
+                      className="bg-indigo-600 text-white px-3 rounded hover:bg-indigo-700"
+                    >
+                      Comment
+                    </button>
+                    <button
+                      onClick={() => { setActiveCommentId(null); setCommentContent(""); }}
+                      className="text-gray-500 px-2"
+                    >
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
 
           <div ref={messagesEndRef} />
         </div>
@@ -257,7 +264,7 @@ const PublicMessage = () => {
               onClick={() => setShowModal(false)}
               className="absolute top-2 right-3 text-gray-500"
             >
-              ✖
+              <i class="bi bi-x-lg"></i>
             </button>
 
             <h2 className="text-2xl font-bold mb-4 text-indigo-600">Add Message</h2>
