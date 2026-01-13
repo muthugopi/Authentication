@@ -26,7 +26,7 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000,
+    maxAge: 7 *24 * 60 * 60 * 1000,
     sameSite: "lax",
     secure: false
   }
@@ -36,7 +36,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/api/auth', authRouter);
-app.use('/api/count', publicRouter);
+app.use('/api', publicRouter);
 app.use('/api/message', message)
 app.use((req, res) => res.status(404).json({ message: "Not Found", description: "The Route Is Not Found On The Server" }));
 
@@ -46,7 +46,7 @@ app.use((req, res) => res.status(404).json({ message: "Not Found", description: 
     await sequelize.authenticate();
     console.log("Database Connected Successfully !");
 
-    await sequelize.sync({alter:true});
+    await sequelize.sync();
     console.log("Table Connected Successfully"); 
 
     const PORT = process.env.PORT || 3000;

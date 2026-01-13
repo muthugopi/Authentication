@@ -14,7 +14,7 @@ export const makeMeAdmin = async (req, res) => {
         const decoded = jwt.verify(oldToken, process.env.SECRET);
 
         if (secret !== process.env.SECRET) {
-            return res.status(403).json({ message: "Forbidden !!" });
+            return res.status(403).json({ message: "Access Denied" });
         }
 
         const user = await User.findOne({
