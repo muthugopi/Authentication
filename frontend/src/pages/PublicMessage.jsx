@@ -194,7 +194,7 @@ const PublicMessage = () => {
               >
                 {msg.comments?.length ? (
                   <>
-                    <i class="bi bi-cloud-fill"></i> {msg.comments.length} Replies
+                    <i className="bi bi-cloud-fill"></i> {msg.comments.length} Replies
                   </>
                 ) : (
                   "Reply"
@@ -229,7 +229,7 @@ const PublicMessage = () => {
                       onClick={() => { setActiveCommentId(null); setCommentContent(""); }}
                       className="text-gray-500 px-2"
                     >
-                      <i class="bi bi-x-lg"></i>
+                      <i className="bi bi-x-lg"></i>
                     </button>
                   </div>
                 </div>
@@ -280,7 +280,7 @@ const PublicMessage = () => {
               onClick={() => setShowModal(false)}
               className="absolute top-2 right-3 text-gray-500"
             >
-              <i class="bi bi-x-lg"></i>
+              <i className="bi bi-x-lg"></i>
             </button>
 
             <h2 className="text-2xl font-bold mb-4 text-indigo-600">Add Message</h2>
