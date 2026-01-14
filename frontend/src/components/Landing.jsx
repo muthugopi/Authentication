@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { Activity, useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import API from "../config/api";
 import Loading from "./Loading";
-
+  
 const Landing = () => {
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -29,7 +29,26 @@ const Landing = () => {
       }
     };
 
+    const sendActivity = async () => {
+      try {
+        const response = await fetch(`${API}/api/activity`, {
+          method : 'POST',
+          headers : {
+            "Content-Type": "application/json",
+            Authorization : `Beared ${isToken}`
+          },
+          body : JSON.stringify({
+            activity : "Logined"
+          })
+        })
+
+      } catch(err) {
+        console.log(err)
+      }
+    }
+
     fetchCount();
+    sendActivity();
   }, []);
 
   if(loading)

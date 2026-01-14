@@ -7,6 +7,7 @@ function AdminPanel() {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isOpen, setIsOpen] = useState(false)
 
   const storedToken = localStorage.getItem("token");
 
@@ -85,11 +86,10 @@ function AdminPanel() {
             </div>
             <div>
               <span
-                className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                  user.role === "admin"
+                className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${user.role === "admin"
                     ? "bg-green-600 text-white"
                     : "bg-gray-700 text-gray-200"
-                }`}
+                  }`}
               >
                 {user.role || "user"}
               </span>
@@ -104,38 +104,44 @@ function AdminPanel() {
       </div>
 
       {/* Analytics Table */}
-      <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
-        <h3 className="text-xl font-bold text-white mb-4">Activity Logs</h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-700 text-white">
-            <thead>
-              <tr>
-                <th className="px-4 py-2 text-left">Name</th>
-                <th className="px-4 py-2 text-left">Activity</th>
-                <th className="px-4 py-2 text-left">Date</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-700">
-              {logs.map((log) => (
-                <tr key={log.id}>
-                  <td className="px-4 py-2">{log.name}</td>
-                  <td className="px-4 py-2">{log.activity}</td>
-                  <td className="px-4 py-2">
-                    {new Date(log.createdAt).toLocaleString()}
-                  </td>
-                </tr>
-              ))}
-              {logs.length === 0 && (
-                <tr>
-                  <td colSpan={3} className="px-4 py-2 text-center text-gray-400">
-                    No activity logs found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+      {isOpen ?
+        <div>
+          <button onClick={() => setIsOpen(false)} className='m-5 inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg transform transition'>Close</button>
+          <div className="bg-gray-800 p-6 rounded-xl shadow-lg">
+            <h3 className="text-xl font-bold text-white mb-4">Activity Logs</h3>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-700 text-white">
+                <thead>
+                  <tr>
+                    <th className="px-4 py-2 text-left">Name</th>
+                    <th className="px-4 py-2 text-left">Activity</th>
+                    <th className="px-4 py-2 text-left">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-700">
+                  {logs.map((log) => (
+                    <tr key={log.id}>
+                      <td className="px-4 py-2">{log.name}</td>
+                      <td className="px-4 py-2">{log.activity}</td>
+                      <td className="px-4 py-2">
+                        {new Date(log.createdAt).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                  {logs.length === 0 && (
+                    <tr>
+                      <td colSpan={3} className="px-4 py-2 text-center text-gray-400">
+                        No activity logs found.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-      </div>
+        : <button className="m-5 inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg transform transition" onClick={() => setIsOpen(true)}>Open</button>
+      }
     </div>
   );
 }

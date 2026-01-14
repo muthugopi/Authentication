@@ -1,46 +1,46 @@
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
 import ActivityLog from "../models/activityLog.model.mjs";
 import User from "../models/user.model.mjs";
 
-export const recordActivity = async (req, res) => {
-  try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    const token = authHeader.split(" ")[1];
-    let decoded;
+  export const recordActivity = async (req, res) => {
     try {
-      decoded = jwt.verify(token, process.env.SECRET);
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const token = authHeader.split(" ")[1];
+      let decoded;
+      try {
+        decoded = jwt.verify(token, process.env.SECRET);
+      } catch (err) {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+
+      await ActivityLog.create({
+          name: decoded.name,
+          activity: "Try to access admin panel"
+      });
+
+      return res.json({ message: `Access Denied ${decoded.name}` });
     } catch (err) {
-      return res.status(401).json({ message: "Invalid token" });
+      console.error(err);
+      return res.status(500).json({ message: "Server error" });
     }
-
-    await ActivityLog.create({
-        name: decoded.name,
-        activity: "Try to login admin panel!"
-    });
-
-    return res.json({ message: "illegal activity recorded !!" });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Server error" });
-  }
-};
+  };
 
 
 export const getAnalytics = async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized Brother" });
     }
 
     const token = authHeader.split(" ")[1];
     let decoded;
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
+      decoded = jwt.verify(token, process.env.SECRET);
     } catch (err) {
       return res.status(401).json({ message: "Invalid token" });
     }
