@@ -2,7 +2,7 @@ import React, { Activity, useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import API from "../config/api";
 import Loading from "./Loading";
-  
+
 const Landing = () => {
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -35,10 +35,10 @@ const Landing = () => {
           method : 'POST',
           headers : {
             "Content-Type": "application/json",
-            Authorization : `Beared ${isToken}`
+            Authorization : `Bearer ${isToken}`
           },
           body : JSON.stringify({
-            activity : "Logined"
+            activity : "Logined"  
           })
         })
 

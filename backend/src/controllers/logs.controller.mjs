@@ -5,24 +5,19 @@ import User from "../models/user.model.mjs";
   export const recordActivity = async (req, res) => {
     try {
       const authHeader = req.headers.authorization;
+      const {activity} = req.body
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({ message: "Unauthorized" });
       }
-
       const token = authHeader.split(" ")[1];
-      let decoded;
-      try {
-        decoded = jwt.verify(token, process.env.SECRET);
-      } catch (err) {
-        return res.status(401).json({ message: "Invalid token" });
-      }
+      let decoded = jwt.verify(token, process.env.SECRET);
 
       await ActivityLog.create({
           name: decoded.name,
-          activity: "Try to access admin panel"
+          activity: activity
       });
 
-      return res.json({ message: `Access Denied ${decoded.name}` });
+      return res.status(204);
     } catch (err) {
       console.error(err);
       return res.status(500).json({ message: "Server error" });
