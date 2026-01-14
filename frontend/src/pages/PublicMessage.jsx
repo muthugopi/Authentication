@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import API from "../config/api";
-import Loading from "./Loading";
+import Loading from "../components/Loading";
 
 const PublicMessage = () => {
   const [messages, setMessages] = useState([]);
@@ -42,8 +42,23 @@ const PublicMessage = () => {
     }
   };
 
+  const loging = () => {
+      fetch(`${API}/api/activity`, {
+        method : 'POST',
+        headers : {
+          Authorization : `Bearer ${isToken}`,
+          "Content-Type" : "application/json"
+        },
+        body : JSON.stringify({
+          activity : "Visited Message Page"
+        })
+
+      })
+    }
+
   useEffect(() => {
     fetchMessages();
+    loging();
   }, []);
 
   useEffect(() => {

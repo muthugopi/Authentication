@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Landing from "./components/Landing";
-import MakeMeAdmin from "./components/MakeMeAdmin";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import AdminPanel from "./components/AdminPanel";
-import PublicMessage from "./components/PublicMessage";
+import Landing from "./pages/Landing";
+import MakeMeAdmin from "./pages/MakeMeAdmin";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import AdminPanel from "./pages/AdminPanel";
+import PublicMessage from "./pages/PublicMessage";
 import Navbar from "./components/Navbar";
 import NotFound from "./components/NotFound";
 

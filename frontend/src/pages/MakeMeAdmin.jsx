@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Loading from "./Loading";
+import Loading from "../components/Loading";
 import API from "../config/api";
 import { Navigate } from "react-router-dom";
 

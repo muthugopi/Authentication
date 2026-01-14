@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
-import Loading from './Loading'
+import Loading from '../components/Loading'
 import API from "../config/api";
 
 function Register() {

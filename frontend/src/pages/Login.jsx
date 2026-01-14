@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import API from "../config/api";
-import Loading from "./Loading";
+import Loading from "../components/Loading";
 
 function Login() {
     const [email, setEmail] = useState("");

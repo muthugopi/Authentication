@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import API from "../config/api";
-import Loading from "./Loading";
+import Loading from "../components/Loading";
 
 function AdminPanel() {
   const [users, setUsers] = useState([]);

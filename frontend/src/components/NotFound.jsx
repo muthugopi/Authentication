@@ -1,7 +1,32 @@
-import React from "react";
+import { useEffect } from "react";
+import API from "../config/api";
 import { Link } from "react-router-dom";
 
 const NotFound = () => {
+
+  const loging = () => {
+
+    const token = localStorage.getItem("token");
+
+    //-----------------------wants to resolve the loging issue-------------------------------
+
+    fetch(`${API}/api/activity`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        activity: "Visited Unknows URL"
+      })
+
+    })
+
+    useEffect(()=>{
+      loging()
+    }, [])
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#071026] px-6">
       <div className="text-center max-w-md">

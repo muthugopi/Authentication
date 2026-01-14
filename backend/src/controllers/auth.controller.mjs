@@ -2,6 +2,7 @@ import passport from '../utils/passport.mjs';
 import User from '../models/user.model.mjs';
 import {hash} from '../utils/hash.mjs';
 import jwt from 'jsonwebtoken';
+import ActivityLog from '../models/activityLog.model.mjs';
 
 export const register = async (req, res) => {
   try {
@@ -18,6 +19,10 @@ export const register = async (req, res) => {
     const hashedPassword = await hash(password);
 
     const user = await User.create({ name, email, password: hashedPassword, role : 'user' });
+    await ActivityLog.create({
+      name : name,
+      Activity : "Account Created"
+    })
     user.save();
     res.status(201).json({ message: "User created successfully!" });
   } catch (err) {
@@ -28,7 +33,7 @@ export const register = async (req, res) => {
 
 
 
-export const login = (req, res, next) => {
+export const login = async (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
   return res.status(500).json({
@@ -47,6 +52,10 @@ export const login = (req, res, next) => {
         {expiresIn : '1d'}
       )
       console.log(`User ${user.name} has logined successfully !!`);
+      ActivityLog.create({
+        name : req.user.name,
+        activity : "Logined"
+      })
       res.json({
         message: "Login successfully",
         user: {
