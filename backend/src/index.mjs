@@ -8,6 +8,7 @@ import sequelize from './config/db.mjs';
 import authRouter from './routes/auth.routes.mjs'
 import publicRouter from './routes/public.routes.mjs'
 import message from './routes/message.routes.mjs'
+import otpRouter from './routes/otp.routes.mjs'
 
 const app = express();
 
@@ -37,7 +38,8 @@ app.use(passport.session());
 
 app.use('/api/auth', authRouter);
 app.use('/api', publicRouter);
-app.use('/api/message', message)
+app.use('/api/message', message);
+app.use('/api/otp', otpRouter )
 app.use((req, res) => res.status(404).json({ message: "Not Found", description: "The Route Is Not Found On The Server" }));
 
 

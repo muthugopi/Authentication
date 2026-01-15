@@ -14,10 +14,10 @@ function App() {
       <Navbar />  
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/admin" element={<MakeMeAdmin />} />
+        <Route path="/verify-admin" element={<MakeMeAdmin />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/users" element={<AdminPanel />} />
+        <Route path="/admin" element={<AdminPanel />} />
         <Route path='/message' element={<PublicMessage />} />
 
         <Route path="*" element={<NotFound />} />

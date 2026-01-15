@@ -7,37 +7,35 @@ function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
+  const [step, setStep] = useState(1); // 1 = enter details, 2 = enter OTP
   const [message, setMessage] = useState("");
   const [messageColor, setMessageColor] = useState("");
   const [loading, setLoading] = useState(false);
-  const [redirct, setRedirect] = useState(false);
+  const [redirect, setRedirect] = useState(false);
 
-  const handleSubmit = async (e) => {
+  // Step 1: Send OTP
+  const handleSendOtp = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
-      const response = await fetch(`${API}/api/auth/register`, {
+      const response = await fetch(`${API}/api/otp/send`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ email }),
       });
-
-      setLoading(true);
 
       const data = await response.json();
 
       if (response.ok) {
         setMessageColor("text-green-500");
-        setMessage(data.message || "Registered successfully!");
-        setName("");
-        setEmail("");
-        setPassword("");
-        setRedirect(true);
+        setMessage("OTP sent! Check your email.");
+        setStep(2); // move to OTP step
       } else {
         setMessageColor("text-red-500");
-        setMessage(data.error || "Registration failed");
+        setMessage(data.error || "Failed to send OTP.");
       }
     } catch (err) {
       setMessageColor("text-red-500");
@@ -47,8 +45,58 @@ function Register() {
     }
   };
 
-  if(redirct) {
-    return <Navigate to="/" replace />
+  // Step 2: Verify OTP and register
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage("");
+
+    try {
+      // Verify OTP first
+      const verifyRes = await fetch(`${API}/api/otp/verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+      });
+      const verifyData = await verifyRes.json();
+
+      if (!verifyRes.ok) {
+        setMessageColor("text-red-500");
+        setMessage(verifyData.error || "Invalid OTP.");
+        return;
+      }
+
+      // OTP verified, now register
+      const registerRes = await fetch(`${API}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+      const registerData = await registerRes.json();
+
+      if (registerRes.ok) {
+        setMessageColor("text-green-500");
+        setMessage(registerData.message || "Registered successfully!");
+        setName("");
+        setEmail("");
+        setPassword("");
+        setOtp("");
+        setRedirect(true);
+      } else {
+        setMessageColor("text-red-500");
+        setMessage(registerData.error || "Registration failed.");
+      }
+
+    } catch (err) {
+      setMessageColor("text-red-500");
+      setMessage("Server error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (redirect) {
+    return <Navigate to="/" replace />;
   }
 
   return (
@@ -58,52 +106,74 @@ function Register() {
           Register
         </h1>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-6" onSubmit={step === 1 ? handleSendOtp : handleVerifyOtp}>
 
-          {/* Name */}
-          <div className="relative">
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder=" "
-              required
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 peer bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
-            />
-            <label className="absolute left-4 top-2 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-blue-500 peer-focus:text-sm">
-              Name
-            </label>
-          </div>
+          {step === 1 && (
+            <>
+              {/* Name */}
+              <div className="relative">
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder=" "
+                  required
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 peer bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+                />
+                <label className="absolute left-4 top-2 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-blue-500 peer-focus:text-sm">
+                  Name
+                </label>
+              </div>
 
-          {/* Email */}
-          <div className="relative">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder=" "
-              required
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 peer bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
-            />
-            <label className="absolute left-4 top-2 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-blue-500 peer-focus:text-sm">
-              Email
-            </label>
-          </div>
+              {/* Email */}
+              <div className="relative">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder=" "
+                  required
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 peer bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+                />
+                <label className="absolute left-4 top-2 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-blue-500 peer-focus:text-sm">
+                  Email
+                </label>
+              </div>
 
-          {/* Password */}
-          <div className="relative">
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder=" "
-              required
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 peer bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
-            />
-            <label className="absolute left-4 top-2 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-blue-500 peer-focus:text-sm">
-              Password
-            </label>
-          </div>
+              {/* Password */}
+              <div className="relative">
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder=" "
+                  required
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 peer bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+                />
+                <label className="absolute left-4 top-2 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-blue-500 peer-focus:text-sm">
+                  Password
+                </label>
+              </div>
+            </>
+          )}
+
+          {step === 2 && (
+            <>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  placeholder=" "
+                  required
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 peer bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+                />
+                <label className="absolute left-4 top-2 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-blue-500 peer-focus:text-sm">
+                  Enter OTP
+                </label>
+              </div>
+            </>
+          )}
 
           {/* Submit */}
           <button
@@ -111,7 +181,7 @@ function Register() {
             disabled={loading}
             className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition duration-300"
           >
-            {loading ? <Loading /> : "Register"}
+            {loading ? <Loading /> : step === 1 ? "Send OTP" : "Verify & Register"}
           </button>
         </form>
 

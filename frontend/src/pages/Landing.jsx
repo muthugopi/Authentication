@@ -154,7 +154,7 @@ const Landing = () => {
             </p>
 
             <div className="flex justify-center gap-3">
-              <Link to="/admin" className="px-4 py-2 my-5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">Open dashboard</Link>
+              <Link to="/verify-admin" className="px-4 py-2 my-5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">Open dashboard</Link>
             </div>
           </aside>
         </section>
