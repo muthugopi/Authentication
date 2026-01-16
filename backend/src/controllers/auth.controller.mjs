@@ -21,7 +21,7 @@ export const register = async (req, res) => {
     const user = await User.create({ name, email, password: hashedPassword, role : 'user' });
     await ActivityLog.create({
       name : name,
-      Activity : "Account Created"
+      Activity : "Created An Account"
     })
     user.save();
     res.status(201).json({ message: "User created successfully!" });
