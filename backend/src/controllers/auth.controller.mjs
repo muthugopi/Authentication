@@ -85,3 +85,23 @@ export const usersData = async (req, res) => {
   const data = await User.findAll();
   return res.status(200).json(data);
 }
+
+export const checkAuth = (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).json({ loggedIn: false });
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET);
+    return res.json({
+      loggedIn: true,
+      user: decoded,
+    });
+  } catch (err) {
+    console.log(err)
+    return res.status(401).json({ loggedIn: false });
+  }
+};

@@ -6,7 +6,7 @@ const router = Router();
 
 router.get("/count", async (req, res) => {
   try {
-    const count = await User.count();
+    const count = await User.count(); 
     res.json({ totalUsers: count });
   } catch (err) {
     res.status(500).json({ message: "Server error" });

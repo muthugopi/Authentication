@@ -46,7 +46,7 @@ app.use((req, res) => res.status(404).json({ message: "Not Found", description: 
     await sequelize.authenticate();
     console.log("Database Connected Successfully !");
 
-    await sequelize.sync({alter:true});
+    await sequelize.sync();
     console.log("Table Connected Successfully"); 
 
     const PORT = process.env.PORT || 3000;

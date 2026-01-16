@@ -1,69 +1,93 @@
-import React, { Activity, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import API from "../config/api";
 import Loading from "../components/Loading";
 
 const Landing = () => {
+  const [auth, setAuth] = useState({
+    loading: true,
+    loggedIn: false,
+    user: null,
+  });
   const [count, setCount] = useState(0);
-  const [loading, setLoading] = useState(false);
-
-  const isToken = localStorage.getItem("token");
-
-  if(!isToken) {
-    return <Navigate to="/register" replace />
-  }
+  const [countLoading, setCountLoading] = useState(false);
 
   useEffect(() => {
-    const fetchCount = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setAuth({ loading: false, loggedIn: false, user: null });
+      return;
+    }
+
+    const verifyAuth = async () => {
       try {
-        setLoading(true);
-        const response = await fetch(`${API}/api/count`,{
-          method : "GET"
+        const res = await fetch(`${API}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        const data = await response.json();
-        setCount(data.totalUsers);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
+
+        if (!res.ok) throw new Error("Invalid token");
+        const data = await res.json();
+
+        setAuth({ loading: false, loggedIn: true, user: data.user });
+
+
+        fetchCount();
+        sendActivity(token);
+      } catch (err) {
+        console.error("auth/me failed:", err.message);
+        localStorage.removeItem("token"); 
+        setAuth({ loading: false, loggedIn: false, user: null });
       }
     };
 
-    const sendActivity = async () => {
-      try {
-        const response = await fetch(`${API}/api/activity`, {
-          method : 'POST',
-          headers : {
-            "Content-Type": "application/json",
-            Authorization : `Bearer ${isToken}`
-          },
-          body : JSON.stringify({
-            activity : "Visited"  
-          })
-        })
-
-      } catch(err) {
-        console.log(err)
-      }
-    }
-
-    fetchCount();
-    sendActivity();
+    verifyAuth();
   }, []);
 
-  if(loading)
-  {
-    return <Loading />
-  }
+  const fetchCount = async () => {
+    setCountLoading(true);
+    try {
+      const res = await fetch(`${API}/api/count`);
+      if (!res.ok) throw new Error("Failed to fetch count");
+      const data = await res.json();
+      setCount(data.totalUsers || 0);
+    } catch (err) {
+      console.error("Count fetch failed:", err);
+    } finally {
+      setCountLoading(false);
+    }
+  };
+
+  const sendActivity = async (token) => {
+    if (!token) return;
+    try {
+      await fetch(`${API}/api/activity`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ activity: "Visited" }),
+      });
+    } catch (err) {
+      console.error("Activity log failed:", err);
+    }
+  };
+
+  if (auth.loading) return <Loading />;
+
+  if (!auth.loggedIn) return <Navigate to="/register" replace />;
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#071026] text-gray-900 dark:text-gray-100 antialiased">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-20 space-y-16">
-
+        {/* HEADER */}
         <header className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-7 space-y-8">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight">
-              Secure authentication engineered for <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-indigo-600 to-blue-400">real apps</span>
+              Secure authentication engineered for{" "}
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-indigo-600 to-blue-400">
+                real apps
+              </span>
             </h1>
 
             <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-3xl">
@@ -72,17 +96,35 @@ const Landing = () => {
             </p>
 
             <div className="flex flex-wrap gap-4 items-center">
-              <Link to="/message" className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg transform transition">
+              <Link
+                to="/message"
+                className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-lg transform transition"
+              >
                 Explore App
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" /></svg>
+                <svg
+                  className="w-4 h-4"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 12h14M12 5l7 7-7 7"
+                  />
+                </svg>
               </Link>
 
-              <Link to="/register" className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white transition">
+              <Link
+                to="/register"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-lg border border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white transition"
+              >
                 Create account
               </Link>
 
               <div className="flex items-center gap-4 ml-2">
-                <Stat number={count ? count : "..."} label="Accounts created" />
+                <Stat number={countLoading ? "..." : count} label="Accounts created" />
                 <Stat number="98%" label="Auth coverage" />
                 <Stat number="17" label="Author" />
               </div>
@@ -90,7 +132,11 @@ const Landing = () => {
           </div>
 
           <div className="lg:col-span-5 grid grid-cols-1 gap-6">
-            <GlassShowcase title="Admin Panel" desc="Manage users & roles — built for clarity." gradient="from-indigo-500 via-indigo-600 to-blue-500" />
+            <GlassShowcase
+              title="Admin Panel"
+              desc="Manage users & roles — built for clarity."
+              gradient="from-indigo-500 via-indigo-600 to-blue-500"
+            />
             <div className="grid grid-cols-2 gap-4">
               <SmallCard title="JWT" desc="Token & session examples" />
               <SmallCard title="Sequelize" desc="Models & migrations" />
@@ -98,19 +144,40 @@ const Landing = () => {
           </div>
         </header>
 
+        {/* CORE MODULES */}
         <section>
-          <h2 className="text-3xl md:text-4xl font-bold mb-8">Core modules — clear & practical</h2>
-
+          <h2 className="text-3xl md:text-4xl font-bold mb-8">
+            Core modules — clear & practical
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <FeatureCard title="Session-Based Auth" desc="Passport + express-session for cookie-based sessions and secure flows." />
-            <FeatureCard title="Role-Based Access" desc="Admin/user separation with server-side route guards." />
-            <FeatureCard title="Protected Routes" desc="Client and server protections using React Router and backend checks." />
-            <FeatureCard title="Scalable DB" desc="Sequelize models and migrations for maintainable SQL schemas." />
-            <FeatureCard title="CORS-safe Integration" desc="Frontend↔backend communication with credentials and safe headers." />
-            <FeatureCard title="Production Thinking" desc="Designed to be extended for real projects — not a synthetic toy." />
+            <FeatureCard
+              title="Session-Based Auth"
+              desc="Passport + express-session for cookie-based sessions and secure flows."
+            />
+            <FeatureCard
+              title="Role-Based Access"
+              desc="Admin/user separation with server-side route guards."
+            />
+            <FeatureCard
+              title="Protected Routes"
+              desc="Client and server protections using React Router and backend checks."
+            />
+            <FeatureCard
+              title="Scalable DB"
+              desc="Sequelize models and migrations for maintainable SQL schemas."
+            />
+            <FeatureCard
+              title="CORS-safe Integration"
+              desc="Frontend↔backend communication with credentials and safe headers."
+            />
+            <FeatureCard
+              title="Production Thinking"
+              desc="Designed to be extended for real projects — not a synthetic toy."
+            />
           </div>
         </section>
 
+        {/* PROJECT DETAILS & DEVELOPER */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 rounded-2xl bg-white dark:bg-gray-800 p-10 shadow-xl border border-gray-100 dark:border-gray-800">
             <h3 className="text-2xl font-semibold mb-4">Authenticate — project details</h3>
@@ -154,7 +221,12 @@ const Landing = () => {
             </p>
 
             <div className="flex justify-center gap-3">
-              <Link to="/verify-admin" className="px-4 py-2 my-5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700">Open dashboard</Link>
+              <Link
+                to="/verify-admin"
+                className="px-4 py-2 my-5 rounded-md bg-indigo-600 text-white hover:bg-indigo-700"
+              >
+                Open dashboard
+              </Link>
             </div>
           </aside>
         </section>
@@ -167,7 +239,7 @@ const Landing = () => {
   );
 };
 
-
+// --- COMPONENTS ---
 const Stat = ({ number, label }) => (
   <div className="bg-white dark:bg-gray-900 rounded-2xl px-4 py-2 shadow border border-gray-100 dark:border-gray-800 text-center transform transition hover:scale-105">
     <div className="text-lg font-bold">{number}</div>
@@ -183,7 +255,7 @@ const GlassShowcase = ({ title, desc, gradient = "from-indigo-500 to-blue-500" }
 );
 
 const SmallCard = ({ title, desc }) => (
-  <div className="rounded-2xl bg-white dark:bg-gray-800 p-4 flex flex-col justify-center shadow-inner border border-gray-100 dark:border-gray-800 transform transition hover:scale-102">
+  <div className="rounded-2xl bg-white dark:bg-gray-800 p-4 flex flex-col justify-center shadow-inner border border-gray-100 dark:border-gray-800 transform transition hover:scale-105">
     <h5 className="text-sm font-semibold text-indigo-600 mb-1">{title}</h5>
     <p className="text-xs text-gray-600 dark:text-gray-300">{desc}</p>
   </div>

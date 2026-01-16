@@ -65,7 +65,7 @@ function AdminPanel() {
   return (
     <div className="min-h-screen bg-gray-900 p-6">
       <h2 className="text-4xl font-bold text-white mb-6 text-center">
-        Admin Panel
+        Admin Panel 
       </h2>
 
       {/* User Cards */}

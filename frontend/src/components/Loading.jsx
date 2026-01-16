@@ -13,7 +13,7 @@ const Loading = () => {
 
         {/* Pulse Text */}
         <p className="text-indigo-400 text-sm tracking-widest animate-pulse">
-          LOADING
+          LOADING...
         </p>
       </div>
     </div>
