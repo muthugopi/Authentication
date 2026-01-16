@@ -50,7 +50,7 @@ function Login() {
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-8">
-                <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-gray-100">Login</h1>
+                <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-gray-100">Sign in</h1>
                 <form className="space-y-6" onSubmit={handleSubmit}>
 
                     {/* Email */}
@@ -86,7 +86,7 @@ function Login() {
                         type="submit"
                         className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition duration-300"
                     >
-                        {loading ? <Loading /> : "Login"}
+                        {loading ? <Loading /> : "Sign in"}
                     </button>
                 </form>
                 <p className="text-center mt-4 text-gray-600 dark:text-gray-400">

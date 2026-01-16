@@ -10,70 +10,61 @@ const PublicMessage = () => {
   const [content, setContent] = useState("");
   const [role, setRole] = useState("user");
   const [loading, setLoading] = useState(false);
-  const [commentContent, setCommentContent] = useState("");
   const [activeCommentId, setActiveCommentId] = useState(null);
+  const [commentMap, setCommentMap] = useState({});
 
-  const isToken = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
   const messagesEndRef = useRef(null);
 
-  if (!isToken) {
-    return <Navigate to="/login" replace />;
-  }
+  if (!token) return <Navigate to="/login" replace />;
 
+  /* ---------------- INIT ---------------- */
   useEffect(() => {
-    const storedRole = localStorage.getItem("role");
-    if (storedRole) setRole(storedRole);
-  }, []);
-
-  const fetchMessages = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`${API}/api/message`, {
-        headers: {
-          Authorization: `Bearer ${isToken}`,
-        },
-      });
-      const data = await res.json();
-      setMessages(data.reverse());
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loging = () => {
-      fetch(`${API}/api/activity`, {
-        method : 'POST',
-        headers : {
-          Authorization : `Bearer ${isToken}`,
-          "Content-Type" : "application/json"
-        },
-        body : JSON.stringify({
-          activity : "Visited Message Page"
-        })
-
-      })
-    }
-
-  useEffect(() => {
+    const r = localStorage.getItem("role");
+    if (r) setRole(r);
     fetchMessages();
-    loging();
+    logActivity();
   }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const sendMessage = async () => {
-    if (!content.trim()) return;
+  /* ---------------- API ---------------- */
+  const fetchMessages = async () => {
     try {
       setLoading(true);
+      const res = await fetch(`${API}/api/message`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setMessages(data.reverse());
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const logActivity = () => {
+    fetch(`${API}/api/activity`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ activity: "Visited Message Page" }),
+    });
+  };
+
+  /* ---------------- ACTIONS ---------------- */
+  const sendMessage = async () => {
+    if (!content.trim()) return;
+    setLoading(true);
+    try {
       await fetch(`${API}/api/message`, {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-          Authorization: `Bearer ${isToken}`,
         },
         body: JSON.stringify({ title, content }),
       });
@@ -81,155 +72,161 @@ const PublicMessage = () => {
       setContent("");
       setShowModal(false);
       fetchMessages();
-    } catch (err) {
-      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
   const likeMessage = async (id) => {
-    try {
-      await fetch(`${API}/api/message/${id}/like`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${isToken}` },
-      });
-      fetchMessages();
-    } catch (err) {
-      console.error(err);
-    }
+    setMessages((p) =>
+      p.map((m) => (m.id === id ? { ...m, likes: (m.likes || 0) + 1 } : m))
+    );
+    await fetch(`${API}/api/message/${id}/like`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
   };
 
   const deleteMessage = async (id) => {
     if (role !== "admin") return;
-    try {
-      await fetch(`${API}/api/message/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${isToken}` },
-      });
-      fetchMessages();
-    } catch (err) {
-      console.error(err);
-    }
+    await fetch(`${API}/api/message/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setMessages((p) => p.filter((m) => m.id !== id));
   };
 
   const addComment = async (messageId) => {
-    if (!commentContent.trim()) return;
+    const text = commentMap[messageId];
+    if (!text?.trim()) return;
 
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) return alert("You must be logged in");
+    const res = await fetch(`${API}/api/message/${messageId}/comment`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ content: text }),
+    });
 
-      const res = await fetch(`${API}/api/message/${messageId}/comment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ content: commentContent }),
-      });
-
-      if (!res.ok) throw new Error("Failed to add comment");
-
-      const updatedMessage = await res.json();
-
-      const updatedMessages = messages.map((msg) =>
-        msg.id === messageId ? updatedMessage : msg
-      );
-
-      setMessages(updatedMessages);
-      setCommentContent("");
-      setActiveCommentId(null);
-    } catch (err) {
-      console.error(err);
-    }
+    const updated = await res.json();
+    setMessages((p) => p.map((m) => (m.id === messageId ? updated : m)));
+    setCommentMap((p) => ({ ...p, [messageId]: "" }));
+    setActiveCommentId(null);
   };
-
-
 
   if (loading) return <Loading />;
 
+  /* ---------------- UI ---------------- */
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 px-6 py-10 font-sans">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="min-h-screen bg-gray-50 px-4 py-8">
+      <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6">
 
-        {/* MESSAGE FEED */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* LEFT SIDEBAR – TRUST */}
+        <aside className="hidden lg:block col-span-3">
+          <div className="sticky top-24 space-y-6">
+            <div className="bg-white p-5 rounded-xl shadow">
+              <h3 className="font-bold text-indigo-600 text-lg">
+                <i className="bi bi-globe2 mr-2"></i> Public Feed
+              </h3>
+              <p className="text-sm text-gray-500 mt-2">
+                A shared space for ideas, announcements and learning.
+              </p>
+            </div>
+
+            <div className="bg-white p-5 rounded-xl shadow text-sm text-gray-600 space-y-2">
+              <p>• Be respectful</p>
+              <p>• No spam</p>
+              <p>• Think before posting</p>
+            </div>
+
+            <div className="bg-indigo-600 text-white p-5 rounded-xl shadow text-sm italic">
+              “Write something worth reading.”
+            </div>
+          </div>
+        </aside>
+
+        {/* CENTER FEED */}
+        <main className="col-span-12 lg:col-span-6 space-y-6">
+          {messages.length === 0 && (
+            <div className="text-center text-gray-500 py-20">
+              <i className="bi bi-chat-dots text-5xl mb-4 block"></i>
+              No messages yet. Be the first.
+            </div>
+          )}
+
           {messages.map((msg) => (
-            <div key={msg.id} className="bg-white p-5 rounded-lg shadow hover:shadow-lg transition">
-
-              {/* Header */}
-              <div className="flex justify-between items-start mb-2">
+            <div
+              key={msg.id}
+              className="bg-white rounded-xl p-5 shadow hover:shadow-md transition"
+            >
+              <div className="flex justify-between mb-2">
                 <div>
-                  <p className="font-bold text-indigo-600">{msg.title}</p>
-                  <p className="text-sm text-gray-500">by {msg.username || "Anonymous"}</p>
+                  <h3 className="font-semibold text-indigo-600">{msg.title}</h3>
+                  <p className="text-xs text-gray-500">
+                    by {msg.username || "Anonymous"}
+                  </p>
                 </div>
-                <div className="flex items-center gap-2">
+
+                <div className="flex gap-3 items-center">
                   <button
                     onClick={() => likeMessage(msg.id)}
-                    className="text-indigo-600 hover:text-indigo-800 flex items-center gap-1 text-sm"
+                    className="text-sm text-red-500 flex items-center gap-1"
                   >
-                    <i className="bi bi-heart-fill text-red-500"></i> {msg.likes || 0}
+                    <i className="bi bi-heart-fill"></i> {msg.likes || 0}
                   </button>
+
                   {role === "admin" && (
                     <button
                       onClick={() => deleteMessage(msg.id)}
-                      className="text-red-500 hover:underline text-sm"
+                      className="text-red-600"
                     >
-                      Delete
+                      <i className="bi bi-trash"></i>
                     </button>
                   )}
                 </div>
               </div>
 
-              {/* Message Content */}
-              <p className="text-gray-700 mb-2">{msg.content}</p>
+              <p className="text-gray-700 mb-3">{msg.content}</p>
 
-              {/* Show number of comments and toggle view */}
               <button
                 onClick={() =>
                   setActiveCommentId(activeCommentId === msg.id ? null : msg.id)
                 }
-                className="text-sm text-indigo-600 hover:underline mb-2"
+                className="text-sm text-indigo-600"
               >
-                {msg.comments?.length ? (
-                  <>
-                    <i className="bi bi-cloud-fill"></i> {msg.comments.length} Replies
-                  </>
-                ) : (
-                  "Reply"
-                )}
-
+                <i className="bi bi-chat"></i>{" "}
+                {msg.comments?.length || 0} Replies
               </button>
 
-              {/* Only show comments if active */}
               {activeCommentId === msg.id && (
-                <div className="space-y-2 mb-2">
+                <div className="mt-3 space-y-2">
                   {msg.comments?.map((c) => (
-                    <div key={c.id} className="bg-gray-100 p-2 rounded text-sm">
-                      <span className="font-semibold">{c.username}:</span> {c.content}
+                    <div
+                      key={c.id}
+                      className="bg-gray-100 rounded p-2 text-sm"
+                    >
+                      <b>{c.username}:</b> {c.content}
                     </div>
                   ))}
 
-                  {/* Add Comment */}
-                  <div className="flex gap-2 mt-2">
+                  <div className="flex gap-2">
                     <input
-                      className="flex-1 p-2 border border-gray-300 rounded"
-                      placeholder="Write a comment..."
-                      value={commentContent}
-                      onChange={(e) => setCommentContent(e.target.value)}
+                      value={commentMap[msg.id] || ""}
+                      onChange={(e) =>
+                        setCommentMap((p) => ({
+                          ...p,
+                          [msg.id]: e.target.value,
+                        }))
+                      }
+                      placeholder="Write a reply..."
+                      className="flex-1 border rounded px-3 py-2 text-sm"
                     />
                     <button
                       onClick={() => addComment(msg.id)}
-                      className="bg-indigo-600 text-white px-3 rounded hover:bg-indigo-700"
+                      className="bg-indigo-600 text-white px-3 rounded"
                     >
-                      Comment
-                    </button>
-                    <button
-                      onClick={() => { setActiveCommentId(null); setCommentContent(""); }}
-                      className="text-gray-500 px-2"
-                    >
-                      <i className="bi bi-x-lg"></i>
+                      Send
                     </button>
                   </div>
                 </div>
@@ -238,72 +235,69 @@ const PublicMessage = () => {
           ))}
 
           <div ref={messagesEndRef} />
-        </div>
+        </main>
 
-        {/* SIDEBAR */}
-        <aside className="hidden lg:flex flex-col gap-6">
-          {/* About Developer */}
-          <div className="bg-white p-6 rounded-lg shadow space-y-3">
-            <h2 className="text-2xl font-bold text-indigo-600">About The Developer</h2>
-            <p><b>Name:</b> Muthugopi J</p>
-            <p><b>Domain:</b> MERN</p>
-            <p><b>Education:</b> 1st Year ECE at <strong>RIT</strong> ’29</p>
-            <p><b>Age:</b> 17</p>
-          </div>
+        {/* RIGHT SIDEBAR – SOCIAL PROOF */}
+        <aside className="hidden lg:block col-span-3">
+          <div className="sticky top-24 space-y-6">
+            <div className="bg-white p-5 rounded-xl shadow">
+              <h4 className="font-semibold mb-3">
+                <i className="bi bi-bar-chart mr-2"></i> Activity
+              </h4>
+              <p className="text-sm text-gray-600">
+                Messages: {messages.length}
+              </p>
+            </div>
 
-          {/* Why This Page */}
-          <div className="bg-white p-6 rounded-lg shadow space-y-3">
-            <h2 className="text-2xl font-bold text-indigo-600">Why This Page?</h2>
-            <p className="text-gray-700">
-              This page is a professional public feed where students can share announcements, thoughts, and ideas.
-            </p>
-            <p className="text-gray-700">
-              It focuses on simplicity, privacy, and learning real-world full-stack development using MERN.
-            </p>
+            <div className="bg-white p-5 rounded-xl shadow text-sm text-gray-600">
+              Your actions here are public & permanent.
+            </div>
           </div>
         </aside>
       </div>
 
-      {/* ADD MESSAGE BUTTON */}
+      {/* FLOATING ADD BUTTON */}
       <button
         onClick={() => setShowModal(true)}
-        className="fixed bottom-8 right-8 w-14 h-14 bg-indigo-600 rounded-full text-3xl shadow hover:bg-indigo-700 text-white"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full text-3xl shadow-lg"
       >
         +
       </button>
 
       {/* MODAL */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-md relative">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md relative">
             <button
               onClick={() => setShowModal(false)}
-              className="absolute top-2 right-3 text-gray-500"
+              className="absolute top-3 right-4"
             >
               <i className="bi bi-x-lg"></i>
             </button>
 
-            <h2 className="text-2xl font-bold mb-4 text-indigo-600">Add Message</h2>
+            <h2 className="text-xl font-bold mb-4 text-indigo-600">
+              New Message
+            </h2>
 
             <input
-              className="w-full p-2 mb-3 border border-gray-300 rounded"
-              placeholder="Title (e.g., Announcement, Question)"
+              className="w-full border rounded px-3 py-2 mb-3"
+              placeholder="Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
 
             <textarea
-              className="w-full p-3 mb-4 border border-gray-300 rounded"
-              placeholder="Write something..."
+              className="w-full border rounded px-3 py-2 mb-4"
+              placeholder="Write your message..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
 
             <button
               onClick={sendMessage}
-              className="w-full bg-indigo-600 py-2 rounded text-white hover:bg-indigo-700"
+              className="w-full bg-indigo-600 text-white py-2 rounded"
             >
-              Post Message
+              Post
             </button>
           </div>
         </div>
