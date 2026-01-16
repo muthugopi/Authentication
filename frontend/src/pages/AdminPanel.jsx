@@ -106,11 +106,10 @@ function AdminPanel() {
                     </div>
                   </div>
                   <span
-                    className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${
-                      user.role === "admin"
+                    className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${user.role === "admin"
                         ? "bg-green-600 text-white"
                         : "bg-gray-700 text-gray-200"
-                    }`}
+                      }`}
                   >
                     {user.role || "user"}
                   </span>
@@ -126,6 +125,7 @@ function AdminPanel() {
       )}
 
       {/* ACTIVITY LOGS VIEW */}
+      {/* ACTIVITY LOGS VIEW */}
       {view === "logs" && (
         <div>
           <button
@@ -135,39 +135,71 @@ function AdminPanel() {
             <i className="bi bi-arrow-left"></i> Back
           </button>
 
-          <div className="overflow-x-auto bg-gray-800 p-6 rounded-xl shadow-lg">
+          <div className="overflow-x-auto bg-gray-800 p-4 sm:p-6 rounded-xl shadow-lg">
             <h3 className="text-xl font-bold mb-4 text-white">Activity Logs</h3>
-            <table className="min-w-full divide-y divide-gray-700 text-white">
-              <thead>
-                <tr className="bg-gray-700">
-                  <th className="px-4 py-2 text-left">Name</th>
-                  <th className="px-4 py-2 text-left">Activity</th>
-                  <th className="px-4 py-2 text-left">Date</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-700">
-                {logs.length > 0 ? (
-                  logs.map((log) => (
-                    <tr key={log.id} className="hover:bg-gray-700 transition">
-                      <td className="px-4 py-2">{log.name}</td>
-                      <td className="px-4 py-2 text-gray-300">{log.activity}</td>
-                      <td className="px-4 py-2 text-gray-400">
-                        {new Date(log.createdAt).toLocaleString()}
+
+            {/* Table for larger screens */}
+            <div className="hidden sm:block">
+              <table className="min-w-full divide-y divide-gray-700 text-white">
+                <thead>
+                  <tr className="bg-gray-700">
+                    <th className="px-4 py-2 text-left">Name</th>
+                    <th className="px-4 py-2 text-left">Activity</th>
+                    <th className="px-4 py-2 text-left">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-700">
+                  {logs.length > 0 ? (
+                    logs.map((log) => (
+                      <tr key={log.id} className="hover:bg-gray-700 transition">
+                        <td className="px-4 py-2">{log.name}</td>
+                        <td className="px-4 py-2 text-gray-300">{log.activity}</td>
+                        <td className="px-4 py-2 text-gray-400">
+                          {new Date(log.createdAt).toLocaleString()}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={3} className="text-center py-4 text-gray-400">
+                        No activity logs found.
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={3} className="text-center py-4 text-gray-400">
-                      No activity logs found.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile-friendly stacked cards */}
+            <div className="sm:hidden flex flex-col gap-4">
+              {logs.length > 0 ? (
+                logs.map((log) => (
+                  <div
+                    key={log.id}
+                    className="bg-gray-700 p-4 rounded-lg shadow hover:bg-gray-600 transition"
+                  >
+                    <p>
+                      <span className="font-semibold text-indigo-400">Name: </span>
+                      {log.name}
+                    </p>
+                    <p>
+                      <span className="font-semibold text-indigo-400">Activity: </span>
+                      {log.activity}
+                    </p>
+                    <p>
+                      <span className="font-semibold text-indigo-400">Date: </span>
+                      {new Date(log.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-400 text-center py-4">No activity logs found.</p>
+              )}
+            </div>
           </div>
         </div>
       )}
+
     </div>
   );
 }
