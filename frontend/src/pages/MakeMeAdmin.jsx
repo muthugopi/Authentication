@@ -93,7 +93,7 @@ function MakeMeAdmin() {
   };
 
   if (redirect) {
-    return <Navigate to="/users" replace />;
+    return <Navigate to="/admin" replace />;
   }
 
   return (

@@ -8,12 +8,12 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
-  const [step, setStep] = useState(1); // 1 = enter details, 2 = enter OTP
+  const [step, setStep] = useState(1); 
   const [message, setMessage] = useState("");
   const [messageColor, setMessageColor] = useState("");
   const [loading, setLoading] = useState(false);
   const [redirect, setRedirect] = useState(false);
-
+  
   // Step 1: Send OTP
   const handleSendOtp = async (e) => {
     e.preventDefault();

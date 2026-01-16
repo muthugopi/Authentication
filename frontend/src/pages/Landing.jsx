@@ -145,7 +145,7 @@ const Landing = () => {
           <aside className="rounded-2xl bg-gradient-to-b from-white/60 to-white/30 dark:from-gray-800 dark:to-gray-800/60 p-8 shadow-xl border border-gray-100 dark:border-gray-700">
             <h3 className="text-xl font-semibold mb-3">About the Developer</h3>
             <p className="text-gray-700 dark:text-gray-200 mb-4">
-              <strong>MUTHUGOPI J</strong> — 17 • Full-Stack Developer (MERN) • ECE at Ramco Institute of Technology.
+              <strong>MUTHUGOPI J</strong> — 17 • Backend Engineer (MERN) • ECE at Ramco Institute of Technology.
             </p>
 
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
