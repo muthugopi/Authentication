@@ -12,11 +12,17 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const [redirect, setRedirect] = useState(false);
 
+  const token = localStorage.getItem("token");
+  if(token) {
+    return <Navigate to='/login' replace />
+  }
+
   // Direct Register
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
+  
 
     try {
       const response = await fetch(`${API}/api/auth/register`, {

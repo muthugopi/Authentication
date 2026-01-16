@@ -101,7 +101,7 @@ export const checkAuth = (req, res) => {
       user: decoded,
     });
   } catch (err) {
-    console.log(err)
+    console.log(err)  
     return res.status(401).json({ loggedIn: false });
   }
 };
