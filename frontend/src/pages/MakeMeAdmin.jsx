@@ -63,12 +63,12 @@ function MakeMeAdmin() {
       showToast("Server error. Please try again.", "error");
     }
   };
+
+ 
  
   const handleAnalytics = async () => {
-    if (!storedToken) {
-      showToast("Login required to record analytics", "error");
-      return;
-    }
+
+    showToast("Admin huh 😂", "error")
 
     try {
       const response = await fetch(`${API}/api/activity`, {
