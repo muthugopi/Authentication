@@ -72,14 +72,6 @@ export const login = async (req, res, next) => {
 };
 
 
-export const profile = (req, res) => {
-console.log(`${req.user}`)
-  res.json({
-    message: "Profile fetched successfully",
-    user: req.user
-  });
-};
-
 
 export const checkAuth = (req, res) => {
   const authHeader = req.headers.authorization;

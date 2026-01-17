@@ -1,5 +1,5 @@
 import express from "express";
-import { register, login, profile, checkAuth } from "../controllers/auth.controller.mjs";
+import { register, login,  checkAuth } from "../controllers/auth.controller.mjs";
 import { authMiddleware } from "../middlewares/auth.middleware.mjs";
 import { makeMeAdmin } from "../controllers/makeMeAdmin.controller.mjs";
 
@@ -10,8 +10,6 @@ router.post("/register", register);
 router.post('/login', login);
 router.get('/me', checkAuth)
 
-// Protected route -> only logined user can access it !
-router.get("/profile",authMiddleware, profile);
 
 //change me before commit !!!
 router.post('/beadmin', makeMeAdmin);

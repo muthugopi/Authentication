@@ -3,203 +3,228 @@ import API from "../config/api";
 import Loading from "../components/Loading";
 
 function AdminPanel() {
-  const [view, setView] = useState(null); // null | "users" | "logs"
+  const [view, setView] = useState(null);
   const [users, setUsers] = useState([]);
   const [logs, setLogs] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState("");
+  const [confirmUser, setConfirmUser] = useState(null);
 
-  const storedToken = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
 
-  // Fetch users
+  const showError = (msg) => {
+    setError(msg);
+    setTimeout(() => setError(""), 3000);
+  };
+
   const fetchUsers = async () => {
     try {
-      setLoading(true);
-      const res = await fetch(`${API}/api/auth/admin`, {
-        headers: { Authorization: `Bearer ${storedToken}` },
+      setPageLoading(true);
+      const res = await fetch(`${API}/api/users`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Failed to fetch users");
-      const data = await res.json();
-      setUsers(data.sort((a, b) => a.name.localeCompare(b.name)));
+      setUsers(await res.json());
       setView("users");
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
     } finally {
-      setLoading(false);
+      setPageLoading(false);
     }
   };
 
-  // Fetch activity logs
   const fetchLogs = async () => {
     try {
-      setLoading(true);
+      setPageLoading(true);
       const res = await fetch(`${API}/api/activity`, {
-        headers: { Authorization: `Bearer ${storedToken}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Failed to fetch logs");
-      const data = await res.json();
-      setLogs(data);
+      setLogs(await res.json());
       setView("logs");
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
     } finally {
-      setLoading(false);
+      setPageLoading(false);
     }
   };
 
-  if (loading) return <Loading />;
+  const deleteUser = async () => {
+    try {
+      setActionLoading(true);
+      const res = await fetch(
+        `${API}/api/users/${confirmUser.id}`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (!res.ok) throw new Error("User delete failed");
+      setUsers((u) => u.filter((x) => x.id !== confirmUser.id));
+      setConfirmUser(null);
+    } catch (err) {
+      showError(err.message);
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
-  if (error)
-    return (
-      <div className="flex justify-center mt-10">
-        <p className="text-red-500 text-lg">{error}</p>
-      </div>
-    );
+  if (pageLoading) return <Loading />;
 
   return (
-    <div className="min-h-screen bg-gray-900 p-6 text-white">
+    <div className="min-h-screen bg-gray-900 p-6 text-white relative">
       <h2 className="text-4xl font-bold mb-8 text-center">Admin Panel</h2>
 
-      {/* INITIAL OPTIONS */}
+      {/* ERROR POPUP */}
+      {error && (
+        <div className="fixed top-5 right-5 bg-red-600 px-4 py-3 rounded-lg shadow-lg z-50">
+          <i className="bi bi-exclamation-triangle me-2"></i>
+          {error}
+        </div>
+      )}
+
       {view === null && (
         <div className="flex justify-center gap-6">
           <button
             onClick={fetchUsers}
-            className="flex items-center gap-3 px-8 py-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 font-semibold shadow-lg transform transition"
+            className="px-8 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700"
           >
-            <i className="bi bi-people-fill"></i> Users
+            <i className="bi bi-people-fill me-2"></i>Users
           </button>
-
           <button
             onClick={fetchLogs}
-            className="flex items-center gap-3 px-8 py-5 rounded-xl bg-green-600 hover:bg-green-700 font-semibold shadow-lg transform transition"
+            className="px-8 py-4 rounded-xl bg-green-600 hover:bg-green-700"
           >
-            <i className="bi bi-clipboard-data"></i> Activity Logs
+            <i className="bi bi-clipboard-data me-2"></i>Logs
           </button>
         </div>
       )}
 
-      {/* USERS VIEW */}
       {view === "users" && (
-        <div>
+        <>
           <button
             onClick={() => setView(null)}
-            className="mb-5 inline-flex items-center gap-2 px-5 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold shadow transition"
+            className="mb-5 px-4 py-2 bg-gray-700 rounded-lg"
           >
-            <i className="bi bi-arrow-left"></i> Back
+            <i className="bi bi-arrow-left me-2"></i>Back
           </button>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {users.length > 0 ? (
-              users.map((user) => (
-                <div
-                  key={user.id}
-                  className="bg-gray-800 p-5 rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300"
-                >
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold text-lg">
-                      {user.name[0].toUpperCase()}
-                    </div>
-                    <div className="ml-4">
-                      <h3 className="text-white font-semibold text-lg">{user.name}</h3>
-                      <p className="text-gray-400 text-sm">{user.email}</p>
-                    </div>
-                  </div>
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${user.role === "admin"
-                        ? "bg-green-600 text-white"
-                        : "bg-gray-700 text-gray-200"
-                      }`}
+            {users.map((user) => (
+              <div
+                key={user.id}
+                className="bg-gray-800 p-5 rounded-xl relative"
+              >
+                {user.role !== "admin" && (
+                  <button
+                    onClick={() => setConfirmUser(user)}
+                    className="absolute top-3 right-3 text-red-500 hover:text-red-400"
                   >
-                    {user.role || "user"}
-                  </span>
+                    <i className="bi bi-trash"></i>
+                  </button>
+                )}
+
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center font-bold">
+                    {user.name?.[0]?.toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">{user.name}</h3>
+                    <p className="text-gray-400 text-sm">{user.email}</p>
+                  </div>
                 </div>
-              ))
-            ) : (
-              <p className="text-gray-400 text-center col-span-full mt-10">
-                No users found.
-              </p>
-            )}
+
+                <span
+                  className={`px-3 py-1 text-sm rounded-full ${
+                    user.role === "admin" ? "bg-green-600" : "bg-gray-700"
+                  }`}
+                >
+                  {user.role}
+                </span>
+              </div>
+            ))}
           </div>
-        </div>
+        </>
       )}
 
-      {/* ACTIVITY LOGS VIEW */}
-      {/* ACTIVITY LOGS VIEW */}
       {view === "logs" && (
-        <div>
+        <>
           <button
             onClick={() => setView(null)}
-            className="mb-5 inline-flex items-center gap-2 px-5 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg font-semibold shadow transition"
+            className="mb-5 px-4 py-2 bg-gray-700 rounded-lg"
           >
-            <i className="bi bi-arrow-left"></i> Back
+            <i className="bi bi-arrow-left me-2"></i>Back
           </button>
 
-          <div className="overflow-x-auto bg-gray-800 p-4 sm:p-6 rounded-xl shadow-lg">
-            <h3 className="text-xl font-bold mb-4 text-white">Activity Logs</h3>
+          <div className="bg-gray-800 p-6 rounded-xl">
+            <h3 className="text-xl font-bold mb-4">Activity Logs</h3>
 
-            {/* Table for larger screens */}
-            <div className="hidden sm:block">
-              <table className="min-w-full divide-y divide-gray-700 text-white">
-                <thead>
-                  <tr className="bg-gray-700">
-                    <th className="px-4 py-2 text-left">Name</th>
-                    <th className="px-4 py-2 text-left">Activity</th>
-                    <th className="px-4 py-2 text-left">Date</th>
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-700">
+                <thead className="bg-gray-700">
+                  <tr>
+                    <th className="px-4 py-2">Name</th>
+                    <th className="px-4 py-2">Activity</th>
+                    <th className="px-4 py-2">Date</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-700">
-                  {logs.length > 0 ? (
-                    logs.map((log) => (
-                      <tr key={log.id} className="hover:bg-gray-700 transition">
-                        <td className="px-4 py-2">{log.name}</td>
-                        <td className="px-4 py-2 text-gray-300">{log.activity}</td>
-                        <td className="px-4 py-2 text-gray-400">
-                          {new Date(log.createdAt).toLocaleString()}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={3} className="text-center py-4 text-gray-400">
-                        No activity logs found.
+                  {logs.map((log) => (
+                    <tr key={log.id}>
+                      <td className="px-4 py-2">{log.name}</td>
+                      <td className="px-4 py-2">{log.activity}</td>
+                      <td className="px-4 py-2">
+                        {new Date(log.createdAt).toLocaleString()}
                       </td>
                     </tr>
-                  )}
+                  ))}
                 </tbody>
               </table>
             </div>
 
-            {/* Mobile-friendly stacked cards */}
             <div className="sm:hidden flex flex-col gap-4">
-              {logs.length > 0 ? (
-                logs.map((log) => (
-                  <div
-                    key={log.id}
-                    className="bg-gray-700 p-4 rounded-lg shadow hover:bg-gray-600 transition"
-                  >
-                    <p>
-                      <span className="font-semibold text-indigo-400">Name: </span>
-                      {log.name}
-                    </p>
-                    <p>
-                      <span className="font-semibold text-indigo-400">Activity: </span>
-                      {log.activity}
-                    </p>
-                    <p>
-                      <span className="font-semibold text-indigo-400">Date: </span>
-                      {new Date(log.createdAt).toLocaleString()}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-400 text-center py-4">No activity logs found.</p>
-              )}
+              {logs.map((log) => (
+                <div key={log.id} className="bg-gray-700 p-4 rounded-lg">
+                  <p><b>Name:</b> {log.name}</p>
+                  <p><b>Activity:</b> {log.activity}</p>
+                  <p className="text-sm text-gray-300">
+                    {new Date(log.createdAt).toLocaleString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
+      {confirmUser && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
+          <div className="bg-gray-800 p-6 rounded-xl w-80">
+            <h3 className="text-xl font-bold mb-3 text-red-500">
+              Delete User
+            </h3>
+            <p className="mb-5">
+              Delete <b>{confirmUser.name}</b>?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setConfirmUser(null)}
+                className="px-4 py-2 bg-gray-600 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={deleteUser}
+                disabled={actionLoading}
+                className="px-4 py-2 bg-red-600 rounded"
+              >
+                {actionLoading ? "Deleting..." : "Delete"}
+              </button>
             </div>
           </div>
         </div>
       )}
-
     </div>
   );
 }

@@ -7,11 +7,14 @@ import AdminPanel from "./pages/AdminPanel";
 import PublicMessage from "./pages/PublicMessage";
 import Navbar from "./components/Navbar";
 import NotFound from "./components/NotFound";
+import ToastContainer from './components/ToastContainer'
+import Profile from "./pages/Profile";
 
 function App() {
   return (
     <BrowserRouter>
       <Navbar />  
+      <ToastContainer />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/verify-admin" element={<MakeMeAdmin />} />
@@ -19,6 +22,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path='/message' element={<PublicMessage />} />
+        <Route path="/profile" element={<Profile />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
