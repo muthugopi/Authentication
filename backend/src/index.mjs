@@ -3,11 +3,12 @@ import session from 'express-session';
 import cors from 'cors';
 import morgan from 'morgan';
 
-import passport from './utils/passport.mjs';
+import passport from './utils/passport.mjs';  
 import sequelize from './config/db.mjs';
-import authRouter from './routes/auth.routes.mjs'
-import publicRouter from './routes/public.routes.mjs'
-import message from './routes/message.routes.mjs'
+import authRouter from './routes/auth.routes.mjs';
+import publicRouter from './routes/public.routes.mjs';
+import message from './routes/message.routes.mjs';
+import userRouter from './routes/user.routes.mjs';
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use(passport.session());
 app.use('/api/auth', authRouter);
 app.use('/api', publicRouter);
 app.use('/api/message', message);
+app.use('/api', userRouter);
 app.use((req, res) => res.status(404).json({ message: "Not Found", description: "The Route Is Not Found On The Server" }));
 
 

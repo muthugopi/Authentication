@@ -176,14 +176,14 @@ const PublicMessage = () => {
                     <i className="bi bi-heart-fill"></i> {msg.likes || 0}
                   </button>
 
-                  {role === "admin" && (
-                    <button
-                      onClick={() => deleteMessage(msg.id)}
-                      className="text-red-600"
-                    >
-                      <i className="bi bi-trash"></i>
-                    </button>
-                  )}
+                    {role === "admin" && (
+                      <button
+                        onClick={() => deleteMessage(msg.id)}
+                        className="text-red-600"
+                      >
+                        <i className="bi bi-trash"></i>
+                      </button>
+                    )}
                 </div>
               </div>
 

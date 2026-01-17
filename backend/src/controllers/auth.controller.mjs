@@ -81,11 +81,6 @@ console.log(`${req.user}`)
 };
 
 
-export const usersData = async (req, res) => {
-  const data = await User.findAll();
-  return res.status(200).json(data);
-}
-
 export const checkAuth = (req, res) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {

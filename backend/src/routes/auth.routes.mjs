@@ -1,7 +1,6 @@
 import express from "express";
-import { register, login, profile, usersData, checkAuth } from "../controllers/auth.controller.mjs";
+import { register, login, profile, checkAuth } from "../controllers/auth.controller.mjs";
 import { authMiddleware } from "../middlewares/auth.middleware.mjs";
-import { authorize } from "../middlewares/authorize.middleware.mjs";
 import { makeMeAdmin } from "../controllers/makeMeAdmin.controller.mjs";
 
 const router = express.Router();
@@ -16,6 +15,5 @@ router.get("/profile",authMiddleware, profile);
 
 //change me before commit !!!
 router.post('/beadmin', makeMeAdmin);
-router.get('/admin',authorize('admin'),usersData);
 
 export default router;
