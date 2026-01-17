@@ -35,7 +35,6 @@ const Landing = () => {
         sendActivity(token);
       } catch (err) {
         console.error("auth/me failed:", err.message);
-        localStorage.removeItem("token"); 
         setAuth({ loading: false, loggedIn: false, user: null });
       }
     };
