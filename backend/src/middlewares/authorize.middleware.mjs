@@ -15,7 +15,7 @@ export const authorize = (role) => {
             if (role != decoded.role) {
                 return res.status(403).json({ message: 'Forbidden: You do not have access' });
             }
-
+            console.log(`${decoded.name} has successfully authorized !`)
             next();
 
         }

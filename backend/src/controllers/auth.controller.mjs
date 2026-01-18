@@ -12,13 +12,15 @@ export const register = async (req, res) => {
     }
 
     const existCheck = await User.findOne({ where: { email } });
-    if (existCheck) {
+    if (existCheck) { 
+      console.log(`${existCheck.name} try to register again by mistake`)
       return res.status(400).json({ error: "User already exists!" });
     }
 
     const hashedPassword = await hash(password);
 
     const user = await User.create({ name, email, password: hashedPassword, role : 'user' });
+    console.log(`${user.name} created account !!!`);
     await ActivityLog.create({
       name : name,
       activity : "Created An Account"

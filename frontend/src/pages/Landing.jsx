@@ -24,10 +24,11 @@ const Landing = () => {
         const res = await fetch(`${API}/api/auth/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
         if (!res.ok) throw new Error("Invalid token");
         const data = await res.json();
-
+        if(data.user.role != 'user') {
+          localStorage.setItem("role", data.user.role)
+        }
         setAuth({ loading: false, loggedIn: true, user: data.user });
 
 

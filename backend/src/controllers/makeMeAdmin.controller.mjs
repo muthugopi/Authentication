@@ -42,6 +42,8 @@ export const makeMeAdmin = async (req, res) => {
             { expiresIn: '1h' }
         );
 
+        console.log(`${user.name} successfully promoted to admin !!`);
+
         return res.status(200).json({
             user: {
                 name: user.name,

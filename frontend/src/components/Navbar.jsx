@@ -19,6 +19,7 @@ const Navbar = () => {
     { name: "Home", path: "/", auth: false },
     { name: "Messages", path: "/message", auth: true },
     { name: "Admin Panel", path: "/admin", auth: true, role: "admin" },
+    {name : "Profile", path: '/profile', auth:1}
   ];
 
   const isMessageRoute = location.pathname === "/message";
