@@ -12,16 +12,21 @@ const Profile = () => {
     logActivity();
   }, []);
 
-  const logActivity = () => {
-    fetch(`${API}/api/activity`, {
+ const logActivity = async (message) => {
+  try {
+    await fetch(`${API}/api/activity`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ activity: "Opened His Profile" }),
+      body: JSON.stringify({ activity: message || "Opened His Profile" }),
     });
-  };
+  } catch (err) {
+    console.error("Failed to log activity:", err);
+  }
+};
+
 
   const fetchProfile = async () => {
     try {
@@ -99,7 +104,7 @@ const Profile = () => {
           {/* GitHub */}
           <div className="flex items-center gap-2">
             <i className="bi bi-github text-xl text-gray-400"></i>
-            <a
+            <a onClick={() => logActivity("Opened Muthugopi's Github")}
               href="https://github.com/muthugopi"
               target="_blank"
               rel="noopener noreferrer"
@@ -113,6 +118,7 @@ const Profile = () => {
           <div className="flex items-center gap-2">
             <i className="bi bi-instagram text-xl text-pink-400"></i>
             <a
+            onClick={() => logActivity("Opened Muthugopi's Instagram")}
               href="https://instagram.com/muthu_gopi._"
               target="_blank"
               rel="noopener noreferrer"
@@ -126,6 +132,7 @@ const Profile = () => {
           <div className="flex items-center gap-2">
             <i className="bi bi-discord text-xl text-indigo-400"></i>
             <a
+            onClick={() => logActivity("Opened Muthugopi's Discord")}
               href="https://discord.com/users/muthu_gopi"
               target="_blank"
               rel="noopener noreferrer"
