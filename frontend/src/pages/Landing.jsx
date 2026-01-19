@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import API from "../config/api";
 import Loading from "../components/Loading";
+import Popup from "../components/Popup";
 
 const Landing = () => {
   const [auth, setAuth] = useState({
@@ -11,6 +12,15 @@ const Landing = () => {
   });
   const [count, setCount] = useState(0);
   const [countLoading, setCountLoading] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowPopup(true);
+    }, 3000);
+  }, []);
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -26,7 +36,7 @@ const Landing = () => {
         });
         if (!res.ok) throw new Error("Invalid token");
         const data = await res.json();
-        if(data.user.role != 'user') {
+        if (data.user.role != 'user') {
           localStorage.setItem("role", data.user.role)
         }
         setAuth({ loading: false, loggedIn: true, user: data.user });
@@ -75,10 +85,17 @@ const Landing = () => {
 
   if (auth.loading) return <Loading />;
 
-  if (!auth.loggedIn) return <Navigate to="/register" replace />;
+  if (!auth.loggedIn) { console.log(auth); return <Navigate to="/register" replace />; }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#071026] text-gray-900 dark:text-gray-100 antialiased">
+      <Popup
+        open={showPopup}
+        onClose={() => setShowPopup(false)}
+        title="We Added New Features !!"
+        description="We Recently Introduced Profile Page to check whether the user involved any unwanted activity in this site. dont panic its not for good heart"
+        path="profile"
+      />
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-20 space-y-16">
         {/* HEADER */}
         <header className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">

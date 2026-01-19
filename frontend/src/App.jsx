@@ -9,6 +9,7 @@ import Navbar from "./components/Navbar";
 import NotFound from "./components/NotFound";
 import ToastContainer from './components/ToastContainer'
 import Profile from "./pages/Profile";
+import './index.css'
 
 function App() {
   return (

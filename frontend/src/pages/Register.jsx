@@ -53,7 +53,7 @@ function Register() {
   };
 
   if (redirect) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login?from=register" replace />;
   }
 
   return (

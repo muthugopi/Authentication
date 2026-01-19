@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Navigate } from "react-router-dom";
 import API from "../config/api";
 import Loading from "../components/Loading";
+import Popup from "../components/Popup";
 
 const PublicMessage = () => {
   const [messages, setMessages] = useState([]);
@@ -12,6 +13,7 @@ const PublicMessage = () => {
   const [loading, setLoading] = useState(false);
   const [activeCommentId, setActiveCommentId] = useState(null);
   const [commentMap, setCommentMap] = useState({});
+  const [showPopup, setShowPopup] = useState(false);
 
   const token = localStorage.getItem("token");
   const messagesEndRef = useRef(null);
@@ -72,6 +74,7 @@ const PublicMessage = () => {
       setContent("");
       setShowModal(false);
       fetchMessages();
+      setShowPopup(true);
     } finally {
       setLoading(false);
     }
@@ -121,6 +124,14 @@ const PublicMessage = () => {
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6">
+
+        <Popup
+          open={showPopup}
+          onClose={() => setShowPopup(false)}
+          title="Thanks For Your Feedback !!"
+          description="Also Recommend your friends to use this website for me and help me to hunt bugs !!."
+          path=""
+        />
 
         {/* LEFT SIDEBAR – TRUST */}
         <aside className="hidden lg:block col-span-3">
@@ -176,14 +187,14 @@ const PublicMessage = () => {
                     <i className="bi bi-heart-fill"></i> {msg.likes || 0}
                   </button>
 
-                    {role === "admin" && (
-                      <button
-                        onClick={() => deleteMessage(msg.id)}
-                        className="text-red-600"
-                      >
-                        <i className="bi bi-trash"></i>
-                      </button>
-                    )}
+                  {role === "admin" && (
+                    <button
+                      onClick={() => deleteMessage(msg.id)}
+                      className="text-red-600"
+                    >
+                      <i className="bi bi-trash"></i>
+                    </button>
+                  )}
                 </div>
               </div>
 

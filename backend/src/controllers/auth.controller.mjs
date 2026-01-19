@@ -78,6 +78,7 @@ export const login = async (req, res, next) => {
 export const checkAuth = (req, res) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
+    console.log("auth check is running well ")
     return res.status(401).json({ loggedIn: false });
   }
 
