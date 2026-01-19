@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import API from "../config/api";
 import Loading from "../components/Loading";
+import { toast } from "../utils/toast.js";
 
 function AdminPanel() {
   const [view, setView] = useState(null);
@@ -10,6 +12,11 @@ function AdminPanel() {
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState("");
   const [confirmUser, setConfirmUser] = useState(null);
+  const [auth, setAuth] = useState({
+    loading: true,
+    admin: false,
+    user: null,
+  });
 
   const token = localStorage.getItem("token");
 
@@ -17,6 +24,37 @@ function AdminPanel() {
     setError(msg);
     setTimeout(() => setError(""), 3000);
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setAuth({ loading: false, loggedIn: false, user: null });
+      return;
+    }
+
+    const verifyAuth = async () => {
+      try {
+        const res = await fetch(`${API}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Invalid token");
+        const data = await res.json();
+        if (data.user.role != 'admin') {
+          localStorage.setItem("role", data.user.role)
+        }
+        setAuth({ loading: false, loggedIn: true, user: data.user });
+
+
+        fetchCount();
+        sendActivity(token);
+      } catch (err) {
+        console.error("auth/me failed:", err.message);
+        setAuth({ loading: false, loggedIn: false, user: null });
+      }
+    };
+
+    verifyAuth();
+  }, []);
 
   const fetchUsers = async () => {
     try {
@@ -53,16 +91,14 @@ function AdminPanel() {
   const deleteUser = async () => {
     try {
       setActionLoading(true);
-      const res = await fetch(
-        `${API}/api/users/${confirmUser.id}`,
-        {
-          method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await fetch(`${API}/api/users/${confirmUser.id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (!res.ok) throw new Error("User delete failed");
       setUsers((u) => u.filter((x) => x.id !== confirmUser.id));
       setConfirmUser(null);
+      toast("User deleted successfully", "success");
     } catch (err) {
       showError(err.message);
     } finally {
@@ -70,13 +106,64 @@ function AdminPanel() {
     }
   };
 
+  const handlePromoteClick = (user) => {
+    setConfirmUser({ ...user, action: "promote" });
+  };
+
+  const promoteModerator = async (user) => {
+    try {
+      setActionLoading(true);
+      const res = await fetch(`${API}/api/auth/bemoderator`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ userId: user.id }),
+      });
+      if (!res.ok) throw new Error("Failed to promote to moderator");
+      toast(`${user.name} is now a moderator`, "success");
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === user.id ? { ...u, role: "moderator" } : u
+        )
+      );
+    } catch (err) {
+      toast(err.message, "error");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const fetchModeratorsView = async () => {
+    try {
+      setPageLoading(true);
+      const res = await fetch(`${API}/api/users`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch users");
+      const allUsers = await res.json();
+      const filteredUsers = allUsers.filter(
+        (user) => user.role !== "admin" && user.role !== "moderator"
+      );
+      setUsers(filteredUsers);
+      setView("moderators");
+    } catch (err) {
+      showError(err.message);
+    } finally {
+      setPageLoading(false);
+    }
+  };
+
   if (pageLoading) return <Loading />;
+  if (auth.loading) return <Loading />;
+
+  if (!auth.admin) { return <Navigate to="/" replace />; }
 
   return (
     <div className="min-h-screen bg-gray-900 p-6 text-white relative">
       <h2 className="text-4xl font-bold mb-8 text-center">Admin Panel</h2>
 
-      {/* ERROR POPUP */}
       {error && (
         <div className="fixed top-5 right-5 bg-red-600 px-4 py-3 rounded-lg shadow-lg z-50">
           <i className="bi bi-exclamation-triangle me-2"></i>
@@ -98,10 +185,16 @@ function AdminPanel() {
           >
             <i className="bi bi-clipboard-data me-2"></i>Logs
           </button>
+          <button
+            onClick={fetchModeratorsView}
+            className="px-8 py-4 rounded-xl bg-yellow-500 hover:bg-yellow-600"
+          >
+            <i className="bi bi-person-check me-2"></i>Moderators
+          </button>
         </div>
       )}
 
-      {view === "users" && (
+      {(view === "users" || view === "moderators") && (
         <>
           <button
             onClick={() => setView(null)}
@@ -112,19 +205,25 @@ function AdminPanel() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {users.map((user) => (
-              <div
-                key={user.id}
-                className="bg-gray-800 p-5 rounded-xl relative"
-              >
+              <div key={user.id} className="bg-gray-800 p-5 rounded-xl relative">
                 {user.role !== "admin" && (
-                  <button
-                    onClick={() => setConfirmUser(user)}
-                    className="absolute top-3 right-3 text-red-500 hover:text-red-400"
-                  >
-                    <i className="bi bi-trash"></i>
-                  </button>
+                  <>
+                    <button
+                      onClick={() => setConfirmUser({ ...user, action: "delete" })}
+                      className="absolute top-3 right-3 text-red-500 hover:text-red-400"
+                    >
+                      <i className="bi bi-trash"></i>
+                    </button>
+                    {user.role !== "moderator" && (
+                      <button
+                        onClick={() => handlePromoteClick(user)}
+                        className="absolute top-3 right-12 text-yellow-400 hover:text-yellow-300"
+                      >
+                        <i className="bi bi-person-check"></i>
+                      </button>
+                    )}
+                  </>
                 )}
-
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center font-bold">
                     {user.name?.[0]?.toUpperCase()}
@@ -134,11 +233,13 @@ function AdminPanel() {
                     <p className="text-gray-400 text-sm">{user.email}</p>
                   </div>
                 </div>
-
                 <span
-                  className={`px-3 py-1 text-sm rounded-full ${
-                    user.role === "admin" ? "bg-green-600" : "bg-gray-700"
-                  }`}
+                  className={`px-3 py-1 text-sm rounded-full ${user.role === "admin"
+                      ? "bg-green-600"
+                      : user.role === "moderator"
+                        ? "bg-yellow-500"
+                        : "bg-gray-700"
+                    }`}
                 >
                   {user.role}
                 </span>
@@ -186,8 +287,12 @@ function AdminPanel() {
             <div className="sm:hidden flex flex-col gap-4">
               {logs.map((log) => (
                 <div key={log.id} className="bg-gray-700 p-4 rounded-lg">
-                  <p><b>Name:</b> {log.name}</p>
-                  <p><b>Activity:</b> {log.activity}</p>
+                  <p>
+                    <b>Name:</b> {log.name}
+                  </p>
+                  <p>
+                    <b>Activity:</b> {log.activity}
+                  </p>
                   <p className="text-sm text-gray-300">
                     {new Date(log.createdAt).toLocaleString()}
                   </p>
@@ -198,12 +303,10 @@ function AdminPanel() {
         </>
       )}
 
-      {confirmUser && (
+      {confirmUser && confirmUser.action === "delete" && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
           <div className="bg-gray-800 p-6 rounded-xl w-80">
-            <h3 className="text-xl font-bold mb-3 text-red-500">
-              Delete User
-            </h3>
+            <h3 className="text-xl font-bold mb-3 text-red-500">Delete User</h3>
             <p className="mb-5">
               Delete <b>{confirmUser.name}</b>?
             </p>
@@ -220,6 +323,35 @@ function AdminPanel() {
                 className="px-4 py-2 bg-red-600 rounded"
               >
                 {actionLoading ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmUser && confirmUser.action === "promote" && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
+          <div className="bg-gray-800 p-6 rounded-xl w-80">
+            <h3 className="text-xl font-bold mb-3 text-yellow-400">Promote User</h3>
+            <p className="mb-5">
+              Promote <b>{confirmUser.name}</b> to Moderator?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setConfirmUser(null)}
+                className="px-4 py-2 bg-gray-600 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  promoteModerator(confirmUser);
+                  setConfirmUser(null);
+                }}
+                disabled={actionLoading}
+                className="px-4 py-2 bg-yellow-500 rounded"
+              >
+                {actionLoading ? "Promoting..." : "Promote"}
               </button>
             </div>
           </div>

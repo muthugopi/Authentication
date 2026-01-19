@@ -5,7 +5,7 @@ import Loading from "../components/Loading.jsx";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); 
   const token = localStorage.getItem("token");
 
   useEffect(() => {
