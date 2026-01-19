@@ -39,19 +39,21 @@ function AdminPanel() {
         });
         if (!res.ok) throw new Error("Invalid token");
         const data = await res.json();
-        if (data.user.role != 'admin') {
-          localStorage.setItem("role", data.user.role)
-        }
-        setAuth({ loading: false, loggedIn: true, user: data.user });
 
+        // Set admin flag properly
+        const isAdmin = data.user.role === "admin";
 
-        fetchCount();
-        sendActivity(token);
+        setAuth({
+          loading: false,
+          admin: isAdmin,
+          user: data.user,
+        });
       } catch (err) {
         console.error("auth/me failed:", err.message);
-        setAuth({ loading: false, loggedIn: false, user: null });
+        setAuth({ loading: false, admin: false, user: null });
       }
     };
+
 
     verifyAuth();
   }, []);
@@ -235,10 +237,10 @@ function AdminPanel() {
                 </div>
                 <span
                   className={`px-3 py-1 text-sm rounded-full ${user.role === "admin"
-                      ? "bg-green-600"
-                      : user.role === "moderator"
-                        ? "bg-yellow-500"
-                        : "bg-gray-700"
+                    ? "bg-green-600"
+                    : user.role === "moderator"
+                      ? "bg-yellow-500"
+                      : "bg-gray-700"
                     }`}
                 >
                   {user.role}

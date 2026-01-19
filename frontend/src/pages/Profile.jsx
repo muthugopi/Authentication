@@ -5,27 +5,27 @@ import Loading from "../components/Loading.jsx";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     logActivity();
   }, []);
 
- const logActivity = async (message) => {
-  try {
-    await fetch(`${API}/api/activity`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ activity: message || "Opened His Profile" }),
-    });
-  } catch (err) {
-    console.error("Failed to log activity:", err);
-  }
-};
+  const logActivity = async (message) => {
+    try {
+      await fetch(`${API}/api/activity`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ activity: message || "Opened His Profile" }),
+      });
+    } catch (err) {
+      console.error("Failed to log activity:", err);
+    }
+  };
 
 
   const fetchProfile = async () => {
@@ -77,8 +77,13 @@ const Profile = () => {
           <div className="flex justify-between items-center bg-gray-700/50 rounded-xl p-4 shadow hover:bg-gray-700 transition">
             <span className="text-gray-300 font-medium">Role</span>
             <span
-              className={`px-3 py-1 rounded-full font-semibold text-sm ${user.role === "admin" ? "bg-green-600" : "bg-gray-600"
+              className={`px-3 py-1 rounded-full font-semibold text-sm ${user.role === "admin"
+                  ? "bg-green-600"
+                  : user.role === "moderator"
+                    ? "bg-yellow-500"
+                    : "bg-gray-600"
                 }`}
+
             >
               {user.role}
             </span>
@@ -118,7 +123,7 @@ const Profile = () => {
           <div className="flex items-center gap-2">
             <i className="bi bi-instagram text-xl text-pink-400"></i>
             <a
-            onClick={() => logActivity("Opened Muthugopi's Instagram")}
+              onClick={() => logActivity("Opened Muthugopi's Instagram")}
               href="https://instagram.com/muthu_gopi._"
               target="_blank"
               rel="noopener noreferrer"
@@ -132,7 +137,7 @@ const Profile = () => {
           <div className="flex items-center gap-2">
             <i className="bi bi-discord text-xl text-indigo-400"></i>
             <a
-            onClick={() => logActivity("Opened Muthugopi's Discord")}
+              onClick={() => logActivity("Opened Muthugopi's Discord")}
               href="https://discord.com/users/muthu_gopi"
               target="_blank"
               rel="noopener noreferrer"
