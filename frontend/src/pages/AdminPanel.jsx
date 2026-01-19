@@ -146,7 +146,7 @@ function AdminPanel() {
       if (!res.ok) throw new Error("Failed to fetch users");
       const allUsers = await res.json();
       const filteredUsers = allUsers.filter(
-        (user) => user.role !== "admin" && user.role !== "moderator"
+        (user) => user.role == "moderator"
       );
       setUsers(filteredUsers);
       setView("moderators");
