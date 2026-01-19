@@ -174,7 +174,7 @@ function AdminPanel() {
       )}
 
       {view === null && (
-        <div className="flex justify-center gap-6">
+        <div className="flex flex-wrap gap-3 justify-center">
           <button
             onClick={fetchUsers}
             className="px-8 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700"
