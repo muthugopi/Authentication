@@ -157,90 +157,133 @@ function AdminPanel() {
     }
   };
 
+  const DashboardButton = ({ icon, label, onClick, color }) => (
+    <button
+      onClick={onClick}
+      className={`flex items-center justify-center gap-3 px-6 py-5 rounded-2xl bg-${color}-600/90 hover:bg-${color}-600 transition font-semibold`}
+    >
+      <i className={`bi ${icon} text-xl`} />
+      {label}
+    </button>
+  );
+
+
   if (pageLoading) return <Loading />;
   if (auth.loading) return <Loading />;
 
   if (!auth.admin) { return <Navigate to="/" replace />; }
 
   return (
-    <div className="min-h-screen bg-gray-900 p-6 text-white relative">
-      <h2 className="text-4xl font-bold mb-8 text-center">Admin Panel</h2>
+    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#020617] to-black text-white px-4 py-6">
 
+      {/* Header */}
+      <div className="max-w-7xl mx-auto mb-8">
+        <h1 className="text-3xl sm:text-4xl font-bold text-center">
+          Admin Dashboard
+        </h1>
+        <p className="text-center text-gray-400 mt-2 text-sm">
+          Manage users, moderators and system activity
+        </p>
+      </div>
+
+      {/* Error Toast */}
       {error && (
-        <div className="fixed top-5 right-5 bg-red-600 px-4 py-3 rounded-lg shadow-lg z-50">
+        <div className="fixed top-5 right-5 bg-red-600 px-4 py-3 rounded-xl shadow-lg z-50 text-sm">
           <i className="bi bi-exclamation-triangle me-2"></i>
           {error}
         </div>
       )}
 
-      {view === null && (
-        <div className="flex flex-wrap gap-3 justify-center">
-          <button
-            onClick={fetchUsers}
-            className="px-8 py-4 rounded-xl bg-indigo-600 hover:bg-indigo-700"
-          >
-            <i className="bi bi-people-fill me-2"></i>Users
-          </button>
-          <button
-            onClick={fetchLogs}
-            className="px-8 py-4 rounded-xl bg-green-600 hover:bg-green-700"
-          >
-            <i className="bi bi-clipboard-data me-2"></i>Logs
-          </button>
-          <button
-            onClick={fetchModeratorsView}
-            className="px-8 py-4 rounded-xl bg-yellow-500 hover:bg-yellow-600"
-          >
-            <i className="bi bi-person-check me-2"></i>Moderators
-          </button>
-        </div>
-      )}
+      {/* Main Container */}
+      <div className="max-w-7xl mx-auto">
 
-      {(view === "users" || view === "moderators") && (
-        <>
+        {/* Dashboard Actions */}
+        {view === null && (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <DashboardButton
+              icon="bi-people-fill"
+              color="indigo"
+              label="Users"
+              onClick={fetchUsers}
+            />
+            <DashboardButton
+              icon="bi-person-check"
+              color="yellow"
+              label="Moderators"
+              onClick={fetchModeratorsView}
+            />
+            <DashboardButton
+              icon="bi-clipboard-data"
+              color="green"
+              label="Activity Logs"
+              onClick={fetchLogs}
+            />
+          </div>
+        )}
+
+        {/* Back Button */}
+        {view && (
           <button
             onClick={() => setView(null)}
-            className="mb-5 px-4 py-2 bg-gray-700 rounded-lg"
+            className="flex items-center gap-2 mb-6 text-sm text-gray-300 hover:text-white"
           >
-            <i className="bi bi-arrow-left me-2"></i>Back
+            <i className="bi bi-arrow-left"></i> Back to Dashboard
           </button>
+        )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {/* USERS / MODERATORS */}
+        {(view === "users" || view === "moderators") && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {users.map((user) => (
-              <div key={user.id} className="bg-gray-800 p-5 rounded-xl relative">
+              <div
+                key={user.id}
+                className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 relative hover:shadow-xl transition"
+              >
+                {/* Actions */}
                 {user.role !== "admin" && (
-                  <>
-                    <button
-                      onClick={() => setConfirmUser({ ...user, action: "delete" })}
-                      className="absolute top-3 right-3 text-red-500 hover:text-red-400"
-                    >
-                      <i className="bi bi-trash"></i>
-                    </button>
+                  <div className="absolute top-3 right-3 flex gap-3">
                     {user.role !== "moderator" && (
                       <button
                         onClick={() => handlePromoteClick(user)}
-                        className="absolute top-3 right-12 text-yellow-400 hover:text-yellow-300"
+                        className="text-yellow-400 hover:text-yellow-300"
+                        title="Promote to moderator"
                       >
                         <i className="bi bi-person-check"></i>
                       </button>
                     )}
-                  </>
+                    <button
+                      onClick={() =>
+                        setConfirmUser({ ...user, action: "delete" })
+                      }
+                      className="text-red-500 hover:text-red-400"
+                      title="Delete user"
+                    >
+                      <i className="bi bi-trash"></i>
+                    </button>
+                  </div>
                 )}
+
+                {/* User Info */}
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center font-bold">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-lg">
                     {user.name?.[0]?.toUpperCase()}
                   </div>
-                  <div>
-                    <h3 className="font-semibold">{user.name}</h3>
-                    <p className="text-gray-400 text-sm">{user.email}</p>
+                  <div className="overflow-hidden">
+                    <h3 className="font-semibold truncate">{user.name}</h3>
+                    <p className="text-xs text-gray-400 truncate">
+                      {user.email}
+                    </p>
                   </div>
                 </div>
+
+                {/* Role */}
                 <span
-                  className={`px-3 py-1 text-sm rounded-full ${user.role === "admin"
-                    ? "bg-green-600"
-                    : user.role === "moderator"
-                      ? "bg-yellow-500"
-                      : "bg-gray-700"
+                  className={`inline-block px-3 py-1 text-xs rounded-full font-semibold capitalize
+                ${user.role === "admin"
+                      ? "bg-emerald-500/20 text-emerald-400"
+                      : user.role === "moderator"
+                        ? "bg-yellow-500/20 text-yellow-400"
+                        : "bg-gray-500/20 text-gray-300"
                     }`}
                 >
                   {user.role}
@@ -248,36 +291,29 @@ function AdminPanel() {
               </div>
             ))}
           </div>
-        </>
-      )}
+        )}
 
-      {view === "logs" && (
-        <>
-          <button
-            onClick={() => setView(null)}
-            className="mb-5 px-4 py-2 bg-gray-700 rounded-lg"
-          >
-            <i className="bi bi-arrow-left me-2"></i>Back
-          </button>
+        {/* LOGS */}
+        {view === "logs" && (
+          <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <h2 className="text-xl font-semibold mb-4">Activity Logs</h2>
 
-          <div className="bg-gray-800 p-6 rounded-xl">
-            <h3 className="text-xl font-bold mb-4">Activity Logs</h3>
-
-            <div className="hidden sm:block overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-700">
-                <thead className="bg-gray-700">
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="min-w-full text-sm">
+                <thead className="text-gray-400 border-b border-white/10">
                   <tr>
-                    <th className="px-4 py-2">Name</th>
-                    <th className="px-4 py-2">Activity</th>
-                    <th className="px-4 py-2">Date</th>
+                    <th className="px-4 py-3 text-left">Name</th>
+                    <th className="px-4 py-3 text-left">Activity</th>
+                    <th className="px-4 py-3 text-left">Date</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-700">
+                <tbody className="divide-y divide-white/10">
                   {logs.map((log) => (
                     <tr key={log.id}>
-                      <td className="px-4 py-2">{log.name}</td>
-                      <td className="px-4 py-2">{log.activity}</td>
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-3">{log.name}</td>
+                      <td className="px-4 py-3">{log.activity}</td>
+                      <td className="px-4 py-3 text-gray-400">
                         {new Date(log.createdAt).toLocaleString()}
                       </td>
                     </tr>
@@ -286,81 +322,29 @@ function AdminPanel() {
               </table>
             </div>
 
-            <div className="sm:hidden flex flex-col gap-4">
+            {/* Mobile Cards */}
+            <div className="md:hidden space-y-4">
               {logs.map((log) => (
-                <div key={log.id} className="bg-gray-700 p-4 rounded-lg">
-                  <p>
-                    <b>Name:</b> {log.name}
+                <div
+                  key={log.id}
+                  className="bg-white/5 rounded-xl p-4 border border-white/10"
+                >
+                  <p className="font-medium">{log.name}</p>
+                  <p className="text-sm text-gray-300 mt-1">
+                    {log.activity}
                   </p>
-                  <p>
-                    <b>Activity:</b> {log.activity}
-                  </p>
-                  <p className="text-sm text-gray-300">
+                  <p className="text-xs text-gray-400 mt-2">
                     {new Date(log.createdAt).toLocaleString()}
                   </p>
                 </div>
               ))}
             </div>
           </div>
-        </>
-      )}
-
-      {confirmUser && confirmUser.action === "delete" && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
-          <div className="bg-gray-800 p-6 rounded-xl w-80">
-            <h3 className="text-xl font-bold mb-3 text-red-500">Delete User</h3>
-            <p className="mb-5">
-              Delete <b>{confirmUser.name}</b>?
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setConfirmUser(null)}
-                className="px-4 py-2 bg-gray-600 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={deleteUser}
-                disabled={actionLoading}
-                className="px-4 py-2 bg-red-600 rounded"
-              >
-                {actionLoading ? "Deleting..." : "Delete"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {confirmUser && confirmUser.action === "promote" && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
-          <div className="bg-gray-800 p-6 rounded-xl w-80">
-            <h3 className="text-xl font-bold mb-3 text-yellow-400">Promote User</h3>
-            <p className="mb-5">
-              Promote <b>{confirmUser.name}</b> to Moderator?
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setConfirmUser(null)}
-                className="px-4 py-2 bg-gray-600 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  promoteModerator(confirmUser);
-                  setConfirmUser(null);
-                }}
-                disabled={actionLoading}
-                className="px-4 py-2 bg-yellow-500 rounded"
-              >
-                {actionLoading ? "Promoting..." : "Promote"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
+
 }
 
 export default AdminPanel;

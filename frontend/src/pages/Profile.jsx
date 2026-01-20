@@ -61,96 +61,119 @@ const Profile = () => {
     );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-6 flex justify-center items-start pt-16 sm:pt-24">
-      <div className="bg-gray-800/90 backdrop-blur-md rounded-2xl shadow-xl w-full max-w-lg p-8 sm:p-12">
-        {/* Header */}
-        <div className="flex flex-col items-center mb-6">
-          <div className="w-24 h-24 rounded-full bg-indigo-500 flex items-center justify-center text-4xl font-bold text-white mb-4">
-            {user.name?.[0]?.toUpperCase()}
-          </div>
-          <h2 className="text-3xl font-bold text-white">{user.name}</h2>
-          <p className="text-gray-400 mt-1">{user.email}</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#020617] to-black px-4 py-10 flex justify-center">
+      <div className="w-full max-w-xl">
 
-        {/* Info Cards */}
-        <div className="grid grid-cols-1 gap-4 mb-4">
-          <div className="flex justify-between items-center bg-gray-700/50 rounded-xl p-4 shadow hover:bg-gray-700 transition">
-            <span className="text-gray-300 font-medium">Role</span>
-            <span
-              className={`px-3 py-1 rounded-full font-semibold text-sm ${user.role === "admin"
-                  ? "bg-green-600"
-                  : user.role === "moderator"
-                    ? "bg-yellow-500"
-                    : "bg-gray-600"
-                }`}
+        {/* Profile Card */}
+        <div className="relative bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden">
 
-            >
-              {user.role}
-            </span>
+          {/* Header */}
+          <div className="flex flex-col items-center px-6 pt-10 pb-6 text-center">
+            <div className="w-28 h-28 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-4xl font-bold text-white shadow-lg">
+              {user.name?.[0]?.toUpperCase()}
+            </div>
+
+            <h2 className="mt-4 text-2xl font-bold text-white">
+              {user.name}
+            </h2>
+
+            <p className="text-sm text-gray-400 break-all">
+              {user.email}
+            </p>
           </div>
 
-          <div className="flex justify-between items-center bg-gray-700/50 rounded-xl p-4 shadow hover:bg-gray-700 transition">
-            <span className="text-gray-300 font-medium">Email</span>
-            <span className="text-white font-semibold text-sm">{user.email}</span>
+          {/* Divider */}
+          <div className="h-px bg-white/10 mx-6" />
+
+          {/* Info Section */}
+          <div className="px-6 py-6 space-y-4">
+
+            {/* Role */}
+            <div className="flex items-center justify-between bg-white/5 rounded-xl p-4">
+              <span className="text-gray-400 text-sm">Role</span>
+              <span
+                className={`px-3 py-1 text-xs font-semibold rounded-full capitalize
+                ${user.role === "admin"
+                    ? "bg-emerald-500/20 text-emerald-400"
+                    : user.role === "moderator"
+                      ? "bg-yellow-500/20 text-yellow-400"
+                      : "bg-gray-500/20 text-gray-300"
+                  }`}
+              >
+                {user.role}
+              </span>
+            </div>
+
+            {/* Email */}
+            <div className="flex flex-col gap-1 bg-white/5 rounded-xl p-4">
+              <span className="text-gray-400 text-sm">Email</span>
+              <span className="text-white text-sm break-all">
+                {user.email}
+              </span>
+            </div>
           </div>
-        </div>
 
-        {/* Support Quote */}
-        <div className="text-center mt-4 mb-6">
-          <p className="text-gray-300 text-sm sm:text-base italic">
-            Do Support For MUTHUGOPI J
-          </p>
-        </div>
+          {/* Quote */}
+          <div className="px-6 pb-4 text-center">
+            <p className="text-gray-300 text-sm italic">
+              Do Support For <span className="text-white font-semibold">MUTHUGOPI J</span>
+            </p>
+          </div>
 
-        {/* Social Links */}
-        {/* Social Links with Icon + Username */}
-        <div className="flex flex-col items-center gap-3 mt-4">
+          {/* Social Links */}
+          <div className="px-6 pb-8 space-y-3">
 
-          {/* GitHub */}
-          <div className="flex items-center gap-2">
-            <i className="bi bi-github text-xl text-gray-400"></i>
-            <a onClick={() => logActivity("Opened Muthugopi's Github")}
+            {/* GitHub */}
+            <a
+              onClick={() => logActivity("Opened Muthugopi's Github")}
               href="https://github.com/muthugopi"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white font-medium hover:underline"
+              className="flex items-center justify-between bg-white/5 hover:bg-white/10 transition rounded-xl p-4"
             >
-              muthugopi
+              <div className="flex items-center gap-3">
+                <i className="bi bi-github text-xl text-gray-300"></i>
+                <span className="text-white font-medium">muthugopi</span>
+              </div>
+              <i className="bi bi-box-arrow-up-right text-gray-400"></i>
             </a>
-          </div>
 
-          {/* Instagram */}
-          <div className="flex items-center gap-2">
-            <i className="bi bi-instagram text-xl text-pink-400"></i>
+            {/* Instagram */}
             <a
               onClick={() => logActivity("Opened Muthugopi's Instagram")}
               href="https://instagram.com/muthu_gopi._"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white font-medium hover:underline"
+              className="flex items-center justify-between bg-white/5 hover:bg-white/10 transition rounded-xl p-4"
             >
-              muthu_gopi._
+              <div className="flex items-center gap-3">
+                <i className="bi bi-instagram text-xl text-pink-400"></i>
+                <span className="text-white font-medium">muthu_gopi._</span>
+              </div>
+              <i className="bi bi-box-arrow-up-right text-gray-400"></i>
             </a>
-          </div>
 
-          {/* Discord */}
-          <div className="flex items-center gap-2">
-            <i className="bi bi-discord text-xl text-indigo-400"></i>
+            {/* Discord */}
             <a
               onClick={() => logActivity("Opened Muthugopi's Discord")}
               href="https://discord.com/users/muthu_gopi"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white font-medium hover:underline"
+              className="flex items-center justify-between bg-white/5 hover:bg-white/10 transition rounded-xl p-4"
             >
-              muthu_gopi
+              <div className="flex items-center gap-3">
+                <i className="bi bi-discord text-xl text-indigo-400"></i>
+                <span className="text-white font-medium">muthu_gopi</span>
+              </div>
+              <i className="bi bi-box-arrow-up-right text-gray-400"></i>
             </a>
+
           </div>
         </div>
-
       </div>
     </div>
   );
+      
 };
 
 export default Profile;

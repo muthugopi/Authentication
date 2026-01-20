@@ -155,7 +155,7 @@ const Landing = () => {
 
               <div className="flex items-center gap-4 ml-2">
                 <Stat number={countLoading ? "..." : count} label="Accounts created" />
-                <Stat number="98%" label="Auth coverage" />
+                <Stat number="98.5%" label="Auth coverage" />
                 <Stat number="17" label="Author" />
               </div>
             </div>

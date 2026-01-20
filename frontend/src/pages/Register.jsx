@@ -13,16 +13,16 @@ function Register() {
   const [redirect, setRedirect] = useState(false);
 
   const token = localStorage.getItem("token");
-  if(token) {
+  if (token) {
     return <Navigate to='/login' replace />
   }
 
-  // Direct Register
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-  
+
 
     try {
       const response = await fetch(`${API}/api/auth/register`, {
@@ -57,14 +57,19 @@ function Register() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 px-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-8">
-        <h1 className="text-3xl font-bold text-center mb-6 text-gray-800 dark:text-gray-100">
-          Sign up
-        </h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-950 via-slate-900 to-black px-4">
 
-        <form className="space-y-6" onSubmit={handleRegister}>
-          {/* Name */}
+      <div className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl shadow-2xl p-8 sm:p-10">
+
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-white">Create Account</h1>
+          <p className="text-gray-400 mt-2 text-sm">
+            Sign up to get started
+          </p>
+        </div>
+
+        <form onSubmit={handleRegister} className="space-y-6">
+
           <div className="relative">
             <input
               type="text"
@@ -72,14 +77,15 @@ function Register() {
               onChange={(e) => setName(e.target.value)}
               placeholder=" "
               required
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 peer bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+              className="peer w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-6 pb-2 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <label className="absolute left-4 top-2 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-blue-500 peer-focus:text-sm">
-              Name
+            <label className="absolute left-4 top-2 text-gray-400 text-sm transition-all
+            peer-placeholder-shown:top-4 peer-placeholder-shown:text-base
+            peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">
+              Full Name
             </label>
           </div>
 
-          {/* Email */}
           <div className="relative">
             <input
               type="email"
@@ -87,14 +93,15 @@ function Register() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder=" "
               required
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 peer bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+              className="peer w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-6 pb-2 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <label className="absolute left-4 top-2 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-blue-500 peer-focus:text-sm">
-              Email
+            <label className="absolute left-4 top-2 text-gray-400 text-sm transition-all
+            peer-placeholder-shown:top-4 peer-placeholder-shown:text-base
+            peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">
+              Email Address
             </label>
           </div>
 
-          {/* Password */}
           <div className="relative">
             <input
               type="password"
@@ -102,38 +109,44 @@ function Register() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder=" "
               required
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 pt-5 pb-2 focus:outline-none focus:ring-2 focus:ring-blue-500 peer bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+              className="peer w-full bg-white/5 border border-white/10 rounded-xl px-4 pt-6 pb-2 text-white placeholder-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <label className="absolute left-4 top-2 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-2 peer-focus:text-blue-500 peer-focus:text-sm">
+            <label className="absolute left-4 top-2 text-gray-400 text-sm transition-all
+            peer-placeholder-shown:top-4 peer-placeholder-shown:text-base
+            peer-focus:top-2 peer-focus:text-sm peer-focus:text-blue-400">
               Password
             </label>
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition duration-300"
+            className="w-full flex justify-center items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl shadow-lg transition disabled:opacity-60"
           >
-            {loading ? <Loading /> : "Sign up"}
+            {loading ? <Loading /> : "Create Account"}
           </button>
         </form>
-
-        <p className="text-center mt-4 text-gray-600 dark:text-gray-400">
+        <p className="text-center text-gray-400 text-sm mt-6">
           Already have an account?{" "}
-          <Link to="/login" className="text-blue-500 hover:underline">
+          <Link to="/login" className="text-blue-400 hover:underline">
             Login
           </Link>
         </p>
 
         {message && (
-          <p className={`${messageColor} text-center mt-4 font-medium`}>
+          <p
+            className={`mt-4 text-center text-sm font-medium ${messageColor === "text-green-500"
+                ? "text-emerald-400"
+                : "text-red-400"
+              }`}
+          >
             {message}
           </p>
         )}
       </div>
     </div>
   );
+
 }
 
 export default Register;
