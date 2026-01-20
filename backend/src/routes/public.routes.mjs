@@ -1,6 +1,7 @@
 import { Router } from "express";
 import User from "../models/user.model.mjs";
 import { recordActivity, getAnalytics} from "../controllers/logs.controller.mjs";
+import { authorize } from "../middlewares/authorize.middleware.mjs";
 
 const router = Router();
 
@@ -12,7 +13,7 @@ router.get("/count", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-router.post("/activity", recordActivity);
-router.get("/activity", getAnalytics);
+router.post("/activity" ,recordActivity);
+router.get("/activity", authorize('admin'),getAnalytics);
 
 export default router;

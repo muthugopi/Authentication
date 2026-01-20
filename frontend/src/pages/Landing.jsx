@@ -13,13 +13,22 @@ const Landing = () => {
   const [count, setCount] = useState(0);
   const [countLoading, setCountLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [viewed, setViewed] = useState(() => {
+    return localStorage.getItem("landing_popup_viewed") === "true";
+  });
+
 
 
   useEffect(() => {
-    setTimeout(() => {
-      setShowPopup(true);
-    }, 3000);
-  }, []);
+    if (!viewed) {
+      const timer = setTimeout(() => {
+        setShowPopup(true);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [viewed]);
+
 
 
   useEffect(() => {
@@ -91,7 +100,11 @@ const Landing = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-[#071026] text-gray-900 dark:text-gray-100 antialiased">
       <Popup
         open={showPopup}
-        onClose={() => setShowPopup(false)}
+        onClose={() => {
+          setShowPopup(false);
+          setViewed(true);
+          localStorage.setItem("landing_popup_viewed", "true");
+        }}
         title="We Added New Features !!"
         description="We Recently Introduced Profile Page to check whether the user involved any unwanted activity in this site. dont panic its not for good heart"
         path="profile"
