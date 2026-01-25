@@ -68,7 +68,6 @@ export const login = async (req, res, next) => {
         },
         token : token,
       });
-      //console.log(user.role)
     });
   })(req, res, next);
 };

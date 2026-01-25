@@ -21,7 +21,7 @@ export const authorize = (role) => {
         }
         catch (err) {
             console.log("catch runs : " + err);
-            return res.status(401).json({message : err})
+            return res.status(401).json({message : err});
         }
     }
 }

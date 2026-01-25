@@ -12,6 +12,10 @@ import User from "../models/user.model.mjs";
       const token = authHeader.split(" ")[1];
       let decoded = jwt.verify(token, process.env.SECRET);
 
+      if(decoded.role === 'admin') {
+        return res.status(200).json({message : "Admins log excluded"})
+      }
+
       await ActivityLog.create({
           name: decoded.name,
           activity: activity
@@ -45,11 +49,11 @@ export const getAnalytics = async (req, res) => {
     if (user.role !== "admin")
       return res.status(403).json({ message: "Forbidden: Admins only" });
 
-    const logs = await ActivityLog.findAll({
+    const rawLogs = await ActivityLog.findAll({
       order: [["createdAt", "DESC"]],
     });
-
-    return res.json(logs);
+   const log = rawLogs.filter(data => data.role !== "admin");
+    return res.json(log);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Server error" });

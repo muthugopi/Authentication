@@ -77,7 +77,7 @@ function MakeMeAdmin() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${storedToken}`,
         },
-        body: JSON.stringify({ activity: "Try TO Be A Admin" }),
+        body: JSON.stringify({ activity: "Try To Be A Admin" }),
       });
 
       const data = await response.json();
