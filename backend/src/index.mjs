@@ -41,7 +41,7 @@ app.use('/api/auth', authRouter);
 app.use('/api', publicRouter);
 app.use('/api/message', message);
 app.use('/api', userRouter);
-app.use('api/portfolio/messafge', contactRouter);
+app.use('/api/portfolio/message', contactRouter);
 app.use((req, res) => res.status(404).json({ message: "Not Found", description: "The Route Is Not Found On The Server" }));
 
 

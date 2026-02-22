@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/db.mjs";
 
-const Message = sequelize.define(
+const Contact = sequelize.define(
   "Contact",
   {
     name: {
